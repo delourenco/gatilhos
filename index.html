@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"/>
@@ -67,7 +67,10 @@ body{
   text-transform:uppercase;
   margin-top:.4rem;
 }
-.sidebar-nav{padding:1.5rem 0;flex:1;overflow-y:auto}
+.sidebar-nav{
+  padding:1.5rem 0;
+  flex:1;
+}
 .nav-item{
   display:flex;
   align-items:center;
@@ -742,13 +745,13 @@ textarea::placeholder{color:var(--border);font-style:italic}
       </div>
       <nav class="sidebar-nav">
         <button class="nav-item active" data-page="gatilho" onclick="navigate('gatilho')">
-          <span class="nav-icon">*</span> Gatilho do Dia
+          <span class="nav-icon">[*]</span> Gatilho do Dia
         </button>
         <button class="nav-item" data-page="rascunhos" onclick="navigate('rascunhos')">
-          <span class="nav-icon">o</span> Meus Textos
+          <span class="nav-icon">[o]</span> Meus Textos
         </button>
         <button class="nav-item" data-page="teoria" onclick="navigate('teoria')">
-          <span class="nav-icon">#</span> Teoria Criativa
+          <span class="nav-icon">[#]</span> Teoria Criativa
         </button>
       </nav>
       <div class="sidebar-footer">
@@ -1108,7 +1111,9 @@ function navigate(page){
   document.querySelectorAll('[data-page]').forEach(el=>{
     el.classList.toggle('active', el.dataset.page===page);
   });
-  document.querySelectorAll('.nav-item').forEach(el=>{el.classList.toggle('active', el.dataset.page===page);});
+  document.querySelectorAll('.nav-item').forEach(el=>{
+    el.classList.toggle('active', el.dataset.page===page);
+  });
   if(page==='rascunhos') loadRascunhos();
   if(window.innerWidth<=768) closeSidebar();
 }
