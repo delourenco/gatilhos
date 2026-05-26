@@ -1108,9 +1108,7 @@ function navigate(page){
   document.querySelectorAll('[data-page]').forEach(el=>{
     el.classList.toggle('active', el.dataset.page===page);
   });
-  document.querySelectorAll('.nav-item').forEach(el=>{
-    el.classList.toggle('active', el.dataset.page===page);
-  });
+  document.querySelectorAll('.nav-item').forEach(el=>{el.classList.toggle('active', el.dataset.page===page);});
   if(page==='rascunhos') loadRascunhos();
   if(window.innerWidth<=768) closeSidebar();
 }
