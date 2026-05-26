@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title id="page-title">escreve desirée · Gatilhos Criativos</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#f7efe0;
+  --red:#800000;
+  --red-light:#a00000;
+  --black:#111;
+  --muted:#5a4a3a;
+  --border:#d4c4a8;
+  --serif:'Playfair Display',serif;
+  --sans:'Inter',sans-serif;
+}
+
+body{
+  font-family:var(--sans);
+  background:var(--cream);
+  color:var(--black);
+  min-height:100vh;
+  font-size:15px;
+}
+
+/* LAYOUT */
+.app{display:flex;min-height:100vh}
+.sidebar{
+  width:240px;
+  min-width:240px;
+  background:var(--red);
+  display:flex;
+  flex-direction:column;
+  position:fixed;
+  top:0;left:0;
+  height:100vh;
+  overflow-y:auto;
+  z-index:100;
+}
+.main{
+  margin-left:240px;
+  flex:1;
+  min-height:100vh;
+}
+
+/* SIDEBAR */
+.sidebar-logo{
+  padding:2rem 1.5rem 1.5rem;
+  border-bottom:1px solid rgba(255,255,255,0.15);
+}
+.sidebar-logo .brand{
+  font-family:var(--serif);
+  font-size:1.1rem;
+  color:#fff;
+  font-style:italic;
+  line-height:1.2;
+}
+.sidebar-logo .tagline{
+  font-size:.7rem;
+  color:rgba(255,255,255,0.6);
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  margin-top:.4rem;
+}
+.sidebar-nav{
+  padding:1.5rem 0;
+  flex:1;
+}
+.nav-item{
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  padding:.75rem 1.5rem;
+  color:rgba(255,255,255,0.75);
+  cursor:pointer;
+  transition:all .2s;
+  font-size:.85rem;
+  border:none;
+  background:none;
+  width:100%;
+  text-align:left;
+}
+.nav-item:hover{background:rgba(255,255,255,0.1);color:#fff}
+.nav-item.active{background:rgba(255,255,255,0.15);color:#fff;font-weight:500}
+.nav-icon{font-size:1rem;width:20px;text-align:center}
+
+.sidebar-footer{
+  padding:1.5rem;
+  border-top:1px solid rgba(255,255,255,0.15);
+}
+.user-info{
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  margin-bottom:1rem;
+}
+.user-avatar{
+  width:36px;height:36px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;color:#fff;font-weight:600;
+  flex-shrink:0;
+}
+.user-name{font-size:.8rem;color:#fff;font-weight:500}
+.user-email{font-size:.7rem;color:rgba(255,255,255,0.6)}
+.btn-logout{
+  width:100%;
+  padding:.5rem;
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.2);
+  border-radius:6px;
+  color:rgba(255,255,255,0.8);
+  font-size:.75rem;
+  cursor:pointer;
+  transition:all .2s;
+  font-family:var(--sans);
+}
+.btn-logout:hover{background:rgba(255,255,255,0.2);color:#fff}
+
+/* PAGES */
+[data-page]{display:none}
+[data-page].active{display:block}
+
+/* AUTH PAGE */
+.auth-wrap{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--cream);
+  padding:2rem;
+}
+.auth-box{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:3rem 2.5rem;
+  max-width:420px;
+  width:100%;
+  text-align:center;
+}
+.auth-logo{
+  font-family:var(--serif);
+  font-size:1.5rem;
+  color:var(--red);
+  font-style:italic;
+  margin-bottom:.5rem;
+}
+.auth-tagline{
+  font-size:.75rem;
+  color:var(--muted);
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  margin-bottom:2.5rem;
+}
+.auth-box h2{
+  font-family:var(--serif);
+  font-size:1.6rem;
+  margin-bottom:.5rem;
+  color:var(--black);
+}
+.auth-box p{
+  font-size:.85rem;
+  color:var(--muted);
+  margin-bottom:2rem;
+  line-height:1.6;
+}
+.form-group{margin-bottom:1rem;text-align:left}
+.form-group label{
+  display:block;
+  font-size:.75rem;
+  font-weight:500;
+  color:var(--muted);
+  margin-bottom:.4rem;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.form-group input{
+  width:100%;
+  border:1px solid var(--border);
+  background:var(--cream);
+  border-radius:8px;
+  padding:.75rem 1rem;
+  font-family:var(--sans);
+  font-size:.9rem;
+  color:var(--black);
+  outline:none;
+  transition:border-color .2s;
+}
+.form-group input:focus{border-color:var(--red)}
+.auth-error{
+  font-size:.8rem;
+  color:var(--red);
+  background:#fff0f0;
+  border:1px solid #ffd0d0;
+  border-radius:8px;
+  padding:.6rem 1rem;
+  margin-bottom:1rem;
+  display:none;
+  text-align:left;
+}
+.auth-error.show{display:block}
+.auth-success{
+  font-size:.8rem;
+  color:#2d6a2d;
+  background:#f0fff0;
+  border:1px solid #b0ddb0;
+  border-radius:8px;
+  padding:.6rem 1rem;
+  margin-bottom:1rem;
+  display:none;
+  text-align:left;
+}
+.auth-success.show{display:block}
+.btn-primary{
+  width:100%;
+  padding:.85rem;
+  background:var(--red);
+  border:none;
+  border-radius:8px;
+  color:#fff;
+  font-family:var(--sans);
+  font-size:.9rem;
+  font-weight:500;
+  cursor:pointer;
+  transition:background .2s;
+  margin-bottom:1rem;
+}
+.btn-primary:hover{background:var(--red-light)}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed}
+.divider{
+  display:flex;align-items:center;gap:.75rem;margin:1.25rem 0;
+}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.divider span{font-size:.75rem;color:var(--muted)}
+.guest-btn{
+  width:100%;
+  background:transparent;
+  color:var(--red);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:.75rem;
+  font-family:var(--sans);
+  font-size:.85rem;
+  cursor:pointer;
+  transition:all .2s;
+}
+.guest-btn:hover{border-color:var(--red);background:rgba(128,0,0,0.04)}
+.auth-note{font-size:.75rem;color:var(--muted);margin-top:1.5rem;line-height:1.5}
+.auth-switch{
+  font-size:.8rem;color:var(--muted);margin-top:1rem;
+}
+.auth-switch a{color:var(--red);cursor:pointer;text-decoration:underline}
+
+/* HEADER */
+.page-header{
+  padding:2rem 2.5rem 1.5rem;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+}
+.page-header h1{
+  font-family:var(--serif);
+  font-size:1.8rem;
+  color:var(--black);
+}
+.page-header .subtitle{
+  font-size:.8rem;
+  color:var(--muted);
+  margin-top:.25rem;
+}
+
+/* GATILHO PAGE */
+.gatilho-wrap{padding:2.5rem}
+.day-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  background:var(--red);
+  color:#fff;
+  font-size:.7rem;
+  font-weight:500;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  padding:.4rem .9rem;
+  border-radius:20px;
+  margin-bottom:1.5rem;
+}
+.gatilho-card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:2.5rem;
+  margin-bottom:2rem;
+  position:relative;
+  overflow:hidden;
+}
+.gatilho-card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:4px;
+  background:var(--red);
+}
+.gatilho-number{
+  font-size:.75rem;
+  color:var(--muted);
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  margin-bottom:1rem;
+}
+.gatilho-text{
+  font-family:var(--serif);
+  font-size:1.6rem;
+  line-height:1.5;
+  color:var(--black);
+  margin-bottom:1.5rem;
+  font-style:italic;
+}
+.gatilho-cat{
+  display:inline-block;
+  background:var(--cream);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:.3rem .8rem;
+  font-size:.75rem;
+  color:var(--muted);
+}
+
+.escrever-section{margin-bottom:2rem}
+.escrever-section h3{
+  font-family:var(--serif);
+  font-size:1.1rem;
+  margin-bottom:1rem;
+  color:var(--black);
+}
+.textarea-wrap{position:relative}
+textarea{
+  width:100%;
+  min-height:200px;
+  border:1px solid var(--border);
+  background:#fff;
+  border-radius:12px;
+  padding:1.25rem;
+  font-family:var(--serif);
+  font-size:1rem;
+  line-height:1.7;
+  color:var(--black);
+  outline:none;
+  resize:vertical;
+  transition:border-color .2s;
+}
+textarea:focus{border-color:var(--red)}
+textarea::placeholder{color:var(--border);font-style:italic}
+.char-count{
+  text-align:right;
+  font-size:.75rem;
+  color:var(--muted);
+  margin-top:.4rem;
+}
+
+.actions-row{
+  display:flex;
+  gap:.75rem;
+  flex-wrap:wrap;
+  margin-top:1rem;
+}
+.btn-save{
+  padding:.7rem 1.5rem;
+  background:var(--red);
+  border:none;
+  border-radius:8px;
+  color:#fff;
+  font-family:var(--sans);
+  font-size:.85rem;
+  font-weight:500;
+  cursor:pointer;
+  transition:background .2s;
+  display:flex;align-items:center;gap:.5rem;
+}
+.btn-save:hover{background:var(--red-light)}
+.btn-save:disabled{opacity:.6;cursor:not-allowed}
+.btn-share{
+  padding:.7rem 1.5rem;
+  background:transparent;
+  border:1px solid var(--border);
+  border-radius:8px;
+  color:var(--black);
+  font-family:var(--sans);
+  font-size:.85rem;
+  cursor:pointer;
+  transition:all .2s;
+  display:flex;align-items:center;gap:.5rem;
+}
+.btn-share:hover{border-color:var(--red);color:var(--red)}
+
+.share-menu{
+  position:relative;
+  display:inline-block;
+}
+.share-dropdown{
+  position:absolute;
+  bottom:calc(100% + 8px);
+  left:0;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:.5rem;
+  min-width:180px;
+  display:none;
+  z-index:50;
+  box-shadow:0 4px 20px rgba(0,0,0,0.1);
+}
+.share-dropdown.open{display:block}
+.share-opt{
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  padding:.6rem .9rem;
+  border-radius:8px;
+  font-size:.82rem;
+  cursor:pointer;
+  transition:background .15s;
+  color:var(--black);
+  border:none;
+  background:none;
+  width:100%;
+  text-align:left;
+  font-family:var(--sans);
+}
+.share-opt:hover{background:var(--cream)}
+
+.toast{
+  position:fixed;
+  bottom:2rem;right:2rem;
+  background:var(--black);
+  color:#fff;
+  padding:.75rem 1.25rem;
+  border-radius:10px;
+  font-size:.85rem;
+  opacity:0;
+  transform:translateY(10px);
+  transition:all .3s;
+  z-index:999;
+  pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* RASCUNHOS */
+.rascunhos-wrap{padding:2.5rem}
+.rascunhos-grid{
+  display:grid;
+  gap:1rem;
+  margin-top:1.5rem;
+}
+.rascunho-card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:1.5rem;
+  cursor:pointer;
+  transition:all .2s;
+}
+.rascunho-card:hover{border-color:var(--red);box-shadow:0 2px 12px rgba(128,0,0,0.08)}
+.rascunho-gatilho{
+  font-size:.75rem;
+  color:var(--muted);
+  font-style:italic;
+  margin-bottom:.5rem;
+  display:-webkit-box;
+  -webkit-line-clamp:1;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.rascunho-texto{
+  font-family:var(--serif);
+  font-size:.95rem;
+  line-height:1.5;
+  color:var(--black);
+  display:-webkit-box;
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+  margin-bottom:.75rem;
+}
+.rascunho-meta{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.rascunho-date{font-size:.75rem;color:var(--muted)}
+.rascunho-del{
+  background:none;border:none;
+  color:var(--muted);cursor:pointer;
+  font-size:.75rem;padding:.2rem .5rem;
+  border-radius:4px;transition:all .2s;
+}
+.rascunho-del:hover{color:var(--red);background:#fff0f0}
+.empty-state{
+  text-align:center;
+  padding:4rem 2rem;
+  color:var(--muted);
+}
+.empty-state .icon{font-size:3rem;margin-bottom:1rem;opacity:.4}
+.empty-state p{font-size:.9rem;line-height:1.6}
+
+/* TEORIA */
+.teoria-wrap{padding:2.5rem}
+.teoria-grid{
+  display:grid;
+  gap:1.5rem;
+  margin-top:1.5rem;
+}
+.teoria-card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:16px;
+  overflow:hidden;
+  cursor:pointer;
+  transition:all .2s;
+}
+.teoria-card:hover{border-color:var(--red);box-shadow:0 4px 20px rgba(128,0,0,0.08)}
+.teoria-header{
+  padding:1.5rem 1.5rem 1rem;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+}
+.teoria-num{
+  font-size:.7rem;
+  color:var(--red);
+  font-weight:600;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  margin-bottom:.4rem;
+}
+.teoria-title{
+  font-family:var(--serif);
+  font-size:1.1rem;
+  color:var(--black);
+  line-height:1.3;
+}
+.teoria-toggle{
+  font-size:1.2rem;
+  color:var(--muted);
+  flex-shrink:0;
+  transition:transform .3s;
+}
+.teoria-card.open .teoria-toggle{transform:rotate(180deg)}
+.teoria-body{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .4s ease;
+}
+.teoria-card.open .teoria-body{max-height:600px}
+.teoria-content{
+  padding:0 1.5rem 1.5rem;
+  border-top:1px solid var(--border);
+  padding-top:1rem;
+}
+.teoria-content p{
+  font-size:.9rem;
+  line-height:1.7;
+  color:var(--muted);
+  margin-bottom:.75rem;
+}
+.teoria-content p:last-child{margin-bottom:0}
+.teoria-content strong{color:var(--black);font-weight:600}
+
+/* MODAL */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.5);
+  z-index:200;
+  display:flex;align-items:center;justify-content:center;
+  padding:1rem;
+  opacity:0;transition:opacity .3s;
+  pointer-events:none;
+}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{
+  background:#fff;
+  border-radius:16px;
+  padding:2rem;
+  max-width:560px;
+  width:100%;
+  max-height:80vh;
+  overflow-y:auto;
+  transform:translateY(20px);
+  transition:transform .3s;
+}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-title{
+  font-family:var(--serif);
+  font-size:1.3rem;
+  margin-bottom:.5rem;
+}
+.modal-subtitle{font-size:.85rem;color:var(--muted);margin-bottom:1.5rem}
+.modal-gatilho{
+  background:var(--cream);
+  border-left:3px solid var(--red);
+  padding:.75rem 1rem;
+  font-style:italic;
+  font-family:var(--serif);
+  font-size:.95rem;
+  margin-bottom:1.5rem;
+  border-radius:0 8px 8px 0;
+}
+.modal-textarea{
+  width:100%;
+  min-height:120px;
+  border:1px solid var(--border);
+  background:var(--cream);
+  border-radius:8px;
+  padding:1rem;
+  font-family:var(--serif);
+  font-size:.95rem;
+  line-height:1.6;
+  color:var(--black);
+  outline:none;
+  resize:vertical;
+  margin-bottom:1rem;
+}
+.modal-textarea:focus{border-color:var(--red)}
+.modal-actions{display:flex;gap:.75rem;justify-content:flex-end}
+.btn-cancel{
+  padding:.6rem 1.2rem;
+  background:none;
+  border:1px solid var(--border);
+  border-radius:8px;
+  font-family:var(--sans);
+  font-size:.85rem;
+  cursor:pointer;
+  color:var(--muted);
+}
+.btn-cancel:hover{border-color:var(--red);color:var(--red)}
+
+/* MOBILE */
+.hamburger{
+  display:none;
+  position:fixed;
+  top:1rem;left:1rem;
+  z-index:150;
+  background:var(--red);
+  border:none;
+  border-radius:8px;
+  padding:.5rem;
+  cursor:pointer;
+  color:#fff;
+  font-size:1.2rem;
+}
+@media(max-width:768px){
+  .hamburger{display:flex;align-items:center;justify-content:center}
+  .sidebar{transform:translateX(-100%);transition:transform .3s}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .page-header{padding:1.5rem 1.5rem 1rem;padding-top:4rem}
+  .gatilho-wrap,.rascunhos-wrap,.teoria-wrap{padding:1.5rem}
+  .gatilho-text{font-size:1.3rem}
+  .auth-box{padding:2rem 1.5rem}
+}
+</style>
+</head>
+<body>
+
+<button class="hamburger" id="hamburger" onclick="toggleSidebar()">☰</button>
+
+<!-- AUTH -->
+<div id="auth-screen" style="display:none">
+  <div class="auth-wrap">
+    <div class="auth-box">
+      <div class="auth-logo">escreve desirée</div>
+      <div class="auth-tagline">Metodologia Criativa</div>
+      <h2 id="auth-title">Bem-vinde!</h2>
+      <p id="auth-desc">Entre para salvar seus textos e acompanhar sua jornada criativa.</p>
+      <div class="auth-error" id="auth-error"></div>
+      <div class="auth-success" id="auth-success"></div>
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" id="auth-email" placeholder="seu@email.com"/>
+      </div>
+      <div class="form-group" id="auth-pass-wrap">
+        <label>Senha</label>
+        <input type="password" id="auth-pass" placeholder="••••••••"/>
+      </div>
+      <button class="btn-primary" id="auth-btn" onclick="handleAuth()">Entrar</button>
+      <div class="divider"><span>ou</span></div>
+      <button class="guest-btn" onclick="enterAsGuest()">Continuar sem conta</button>
+      <div class="auth-switch" id="auth-switch">
+        Não tem conta? <a onclick="toggleAuthMode()">Criar conta</a>
+      </div>
+      <p class="auth-note">Seus textos ficam salvos e você pode acessar de qualquer dispositivo.</p>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app-screen" style="display:none">
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="brand">escreve desirée</div>
+        <div class="tagline">Gatilhos Criativos</div>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-page="gatilho" onclick="navigate('gatilho')">
+          <span class="nav-icon">✦</span> Gatilho do Dia
+        </button>
+        <button class="nav-item" data-page="rascunhos" onclick="navigate('rascunhos')">
+          <span class="nav-icon">◎</span> Meus Textos
+        </button>
+        <button class="nav-item" data-page="teoria" onclick="navigate('teoria')">
+          <span class="nav-icon">◈</span> Teoria Criativa
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-info" id="user-info-wrap">
+          <div class="user-avatar" id="user-avatar">?</div>
+          <div>
+            <div class="user-name" id="user-name">Visitante</div>
+            <div class="user-email" id="user-email"></div>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="handleLogout()">Sair</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <!-- GATILHO -->
+      <div data-page="gatilho" class="active">
+        <div class="page-header">
+          <div>
+            <h1>Gatilho do Dia</h1>
+            <div class="subtitle" id="today-date"></div>
+          </div>
+        </div>
+        <div class="gatilho-wrap">
+          <div class="day-badge">✦ <span id="day-count">Dia 1</span></div>
+          <div class="gatilho-card">
+            <div class="gatilho-number" id="gatilho-number">Gatilho #01</div>
+            <div class="gatilho-text" id="gatilho-text">Carregando...</div>
+            <span class="gatilho-cat" id="gatilho-cat"></span>
+          </div>
+
+          <div class="escrever-section">
+            <h3>Escreva aqui</h3>
+            <div class="textarea-wrap">
+              <textarea id="texto-area" placeholder="Deixe as palavras fluírem... não existe certo ou errado aqui." oninput="updateCharCount()"></textarea>
+            </div>
+            <div class="char-count"><span id="char-count">0</span> caracteres</div>
+          </div>
+
+          <div class="actions-row">
+            <button class="btn-save" id="btn-save" onclick="salvarTexto()">
+              ◎ Salvar texto
+            </button>
+            <div class="share-menu">
+              <button class="btn-share" onclick="toggleShareMenu()">
+                ↗ Compartilhar
+              </button>
+              <div class="share-dropdown" id="share-dropdown">
+                <button class="share-opt" onclick="shareOn('twitter')">𝕏 Twitter / X</button>
+                <button class="share-opt" onclick="shareOn('instagram')">◎ Instagram (copiar)</button>
+                <button class="share-opt" onclick="shareOn('whatsapp')">✉ WhatsApp</button>
+                <button class="share-opt" onclick="shareOn('copy')">⧉ Copiar texto</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RASCUNHOS -->
+      <div data-page="rascunhos">
+        <div class="page-header">
+          <div>
+            <h1>Meus Textos</h1>
+            <div class="subtitle">Tudo que você escreveu por aqui</div>
+          </div>
+        </div>
+        <div class="rascunhos-wrap">
+          <div class="rascunhos-grid" id="rascunhos-grid"></div>
+        </div>
+      </div>
+
+      <!-- TEORIA -->
+      <div data-page="teoria">
+        <div class="page-header">
+          <div>
+            <h1>Teoria Criativa</h1>
+            <div class="subtitle">Entenda o processo por trás das ideias</div>
+          </div>
+        </div>
+        <div class="teoria-wrap">
+          <div class="teoria-grid" id="teoria-grid"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- MODAL RASCUNHO -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-title">Editar texto</div>
+    <div class="modal-subtitle">Gatilho original:</div>
+    <div class="modal-gatilho" id="modal-gatilho"></div>
+    <textarea class="modal-textarea" id="modal-textarea"></textarea>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModalDirect()">Cancelar</button>
+      <button class="btn-save" onclick="salvarEdicao()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// SUPABASE
+const SUPABASE_URL = 'https://iijmwphkhuhczweqviee.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlpam13cGhraHVoY3p3ZXF2aWVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgxNDIxNDUsImV4cCI6MjA2MzcxODE0NX0.Bm9C4KMXovJ7ELxwanvxEilmjRWaWZJHXFkqdRMtRAs';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// GATILHOS
+const GATILHOS = [
+  {texto:"Escreva sobre uma cor que você nunca conseguiu descrever com palavras.",cat:"Sensorial"},
+  {texto:"Seu personagem encontra uma carta que foi escrita para ele, mas nunca enviada.",cat:"Narrativa"},
+  {texto:"Descreva um lugar onde o tempo parece não existir.",cat:"Espaço"},
+  {texto:"Escreva a última conversa entre duas pessoas que se amaram muito.",cat:"Relações"},
+  {texto:"O que você diria para a versão de você de 10 anos atrás?",cat:"Memória"},
+  {texto:"Crie um personagem definido apenas pelo que ele recusa a fazer.",cat:"Personagem"},
+  {texto:"Descreva o silêncio de um quarto específico que você conhece.",cat:"Sensorial"},
+  {texto:"Escreva sobre uma escolha que mudou tudo — sem citar a escolha.",cat:"Narrativa"},
+  {texto:"Seu personagem encontra um objeto perdido há anos. O que sente?",cat:"Emoção"},
+  {texto:"Escreva uma cena inteira usando apenas diálogos.",cat:"Técnica"},
+  {texto:"O que existe do outro lado de uma janela que ninguém nunca abriu?",cat:"Imaginação"},
+  {texto:"Descreva uma despedida sem usar as palavras 'adeus' ou 'tchau'.",cat:"Técnica"},
+  {texto:"Escreva sobre alguém que coleciona coisas invisíveis.",cat:"Personagem"},
+  {texto:"Qual é o cheiro da saudade?",cat:"Sensorial"},
+  {texto:"Escreva um segredo que o narrador nunca revelaria em voz alta.",cat:"Narrativa"},
+  {texto:"Crie um lugar que só existe quando ninguém está olhando.",cat:"Imaginação"},
+  {texto:"Escreva sobre a primeira vez que você entendeu que alguém era humano de verdade.",cat:"Relações"},
+  {texto:"Seu personagem acorda com uma memória que não é dele.",cat:"Ficção"},
+  {texto:"Escreva sobre o que permanece depois que tudo acaba.",cat:"Emoção"},
+  {texto:"Descreva um movimento em câmera lenta.",cat:"Técnica"},
+  {texto:"O que o seu personagem faz quando ninguém está assistindo?",cat:"Personagem"},
+  {texto:"Escreva sobre uma promessa que foi cumprida tarde demais.",cat:"Tempo"},
+  {texto:"Crie um ritual inventado por uma pessoa solitária.",cat:"Imaginação"},
+  {texto:"Escreva sobre a beleza de algo que está se deteriorando.",cat:"Observação"},
+  {texto:"O que existe no espaço entre duas respirações?",cat:"Sensorial"},
+  {texto:"Escreva uma cena ambientada às 3h da manhã.",cat:"Tempo"},
+  {texto:"Seu personagem recebe uma segunda chance. Ele a quer?",cat:"Narrativa"},
+  {texto:"Descreva um amor sem romantizá-lo.",cat:"Relações"},
+  {texto:"Escreva sobre uma voz que você reconheceria em qualquer lugar.",cat:"Memória"},
+  {texto:"O que acontece quando duas solidões se encontram?",cat:"Relações"},
+  {texto:"Crie um personagem que mente para si mesmo com maestria.",cat:"Personagem"},
+  {texto:"Escreva sobre um objeto que guarda uma história que ninguém mais sabe.",cat:"Memória"},
+  {texto:"Descreva a sensação de estar em um lugar pela última vez.",cat:"Emoção"},
+  {texto:"Escreva sobre algo que você só consegue ver de lado.",cat:"Observação"},
+  {texto:"Seu personagem descobre que estava errado sobre algo fundamental.",cat:"Narrativa"},
+  {texto:"Escreva sobre a passagem do tempo usando apenas o corpo.",cat:"Técnica"},
+  {texto:"O que o silêncio diz quando está com raiva?",cat:"Imaginação"},
+  {texto:"Crie um lugar que existe apenas na memória de uma pessoa.",cat:"Memória"},
+  {texto:"Escreva sobre o exato momento em que algo muda para sempre.",cat:"Tempo"},
+  {texto:"Descreva uma alegria que não tem nome.",cat:"Emoção"},
+  {texto:"Seu personagem sente falta de algo que nunca existiu.",cat:"Emoção"},
+  {texto:"Escreva sobre a distância entre duas pessoas no mesmo quarto.",cat:"Relações"},
+  {texto:"O que você deixaria para trás se pudesse recomeçar do zero?",cat:"Reflexão"},
+  {texto:"Crie um personagem através de seus medos mais específicos.",cat:"Personagem"},
+  {texto:"Escreva sobre uma conversa que nunca aconteceu mas deveria.",cat:"Relações"},
+  {texto:"Descreva o peso de uma decisão antes de tomá-la.",cat:"Emoção"},
+  {texto:"Escreva sobre alguém aprendendo algo pela última vez.",cat:"Tempo"},
+  {texto:"O que existe entre o que você diz e o que você quer dizer?",cat:"Reflexão"},
+  {texto:"Crie um mundo onde uma regra simples mudou tudo.",cat:"Ficção"},
+  {texto:"Escreva sobre o momento exato em que você parou de ser criança.",cat:"Memória"},
+  {texto:"Descreva uma saudade sem objeto — de algo que você não sabe ao certo.",cat:"Emoção"},
+  {texto:"Escreva uma cena em que duas pessoas dizem coisas opostas ao que sentem.",cat:"Técnica"},
+  {texto:"O que o seu personagem carrega que ninguém vê?",cat:"Personagem"},
+  {texto:"Escreva sobre um começo disfarçado de fim.",cat:"Narrativa"},
+  {texto:"Descreva o som da sua cidade em um horário específico.",cat:"Sensorial"},
+  {texto:"Escreva sobre algo que você só entendeu depois de perder.",cat:"Memória"},
+  {texto:"Crie um personagem que é definido por uma ausência.",cat:"Personagem"},
+  {texto:"O que permanece de uma pessoa depois que ela vai embora?",cat:"Reflexão"},
+  {texto:"Escreva sobre um hábito carregado de significado.",cat:"Observação"},
+  {texto:"Descreva o exato instante antes de algo inevitável.",cat:"Narrativa"},
+];
+
+const TEORIA = [
+  {
+    titulo:"A Teoria da Colcha de Retalhos",
+    conteudo:`<p>Criar é como montar uma colcha de retalhos. Nada surge do nada — nossas criações são uma mistura única de tudo o que consumimos: aquele conceito técnico de um curso, um meme visto no intervalo, uma cena de documentário ou uma frase solta ouvida numa cafeteria.</p>
+    <p>Nosso cérebro funciona como uma sacola que precisa estar cheia de "referências" para trabalhar. <strong>Quanto mais diversificados os seus retalhos, mais repertório você terá na hora de criar algo original.</strong></p>
+    <p>A beleza não está no pedaço de tecido isolado, mas na forma como você decide conectá-los para criar um padrão que nunca existiu antes.</p>`
+  },
+  {
+    titulo:"Criatividade Combinatória",
+    conteudo:`<p>Henri Poincaré já dizia que criar não é fabricar o novo, mas <strong>discernir e unir combinações úteis de elementos que já conhecemos</strong>. Seu trabalho é ser um "curador de conexões".</p>
+    <p>A psicologia da Gestalt nos ensina que nossa mente sempre tenta formar um "todo" a partir de partes menores. Quando você oferece bons retalhos ao seu cérebro, ele naturalmente tenta organizá-los em uma estrutura coesa.</p>
+    <p>Todo mundo pode ter tanto ideias boas quanto muitas ideias — não é um dom reservado para poucos.</p>`
+  },
+  {
+    titulo:"Modo Difuso e Incubação",
+    conteudo:`<p>Sabe aquela faísca que vem no banho ou numa conversa de bar? É o seu cérebro trabalhando em "modo difuso". Ele pega os retalhos que você guardou e começa a testar conexões enquanto você está distraído.</p>
+    <p><strong>O descanso é o tempo que a sua "costura" precisa para assentar.</strong> A Rede de Modo Padrão (DMN) é ativada justamente quando você não está focado em uma tarefa específica.</p>
+    <p>Trate o descanso como parte do seu cronograma, e não como recompensa pelo cansaço extremo.</p>`
+  },
+  {
+    titulo:"Curadoria Ativa vs. Coleta Passiva",
+    conteudo:`<p><strong>Coleta Passiva:</strong> "Vou salvar isso porque gostei." Gera acúmulo e confusão.</p>
+    <p><strong>Curadoria Ativa:</strong> "Vou salvar isso porque essa solução resolve um problema que costumo enfrentar." Gera inteligência e agilidade.</p>
+    <p>O filtro da intencionalidade muda conforme sua necessidade. Para um repertório geral, filtre por: <strong>Forma</strong> (como foi feito?), <strong>Função</strong> (qual problema resolve?) e <strong>Contexto</strong> (onde poderia ser subvertido?).</p>`
+  },
+  {
+    titulo:"Pensamento Divergente",
+    conteudo:`<p>Não tenha medo de "espalhar os tecidos no chão". O Pensamento Divergente é o momento de testar caminhos, mudar o ângulo, inverter a lógica.</p>
+    <p><strong>Busque o oposto:</strong> tente rascunhar uma solução por um ângulo e depois pelo caminho completamente contrário.</p>
+    <p>Muitas vezes, uma solução inovadora nasce de um caminho que você decidiu descartar — ele serve para abrir sua mente para uma nova conexão que você não veria de outra forma.</p>`
+  },
+  {
+    titulo:"Constância sem Pressa",
+    conteudo:`<p>A criatividade flui melhor quando encontra um ritmo constante — mas <strong>constância não é pressa</strong>. Você vai precisar aprender a lidar com a autocobrança e as comparações.</p>
+    <p>Encontre sua rotina, seu tempo, sua constância. Reserve espaços no calendário e encare o projeto como algo importante que deve ser prioridade.</p>
+    <p>E sobre perfeição: ao invés de buscá-la, busque objetivos concretos — produto mínimo viável, fases de implementação, upgrades adicionais. A pessoa que você era ontem já adquiriu novas referências. É natural que o trabalho de ontem pareça imperfeito hoje.</p>`
+  },
+];
+
+// STATE
+let state = {
+  user: null,
+  isGuest: false,
+  authMode: 'login',
+  currentPage: 'gatilho',
+  rascunhos: [],
+  editingId: null,
+  shareMenuOpen: false,
+};
+
+// UTILS
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
+function formatDate(d){
+  return new Date(d).toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+}
+
+// GATILHO DO DIA
+function getGatilhoDodia(){
+  const start = new Date('2025-01-01');
+  const today = new Date();
+  const diff = Math.floor((today - start) / (1000*60*60*24));
+  const idx = diff % GATILHOS.length;
+  const dayNum = (diff % GATILHOS.length) + 1;
+  return {gatilho: GATILHOS[idx], idx, dayNum};
+}
+
+function renderGatilho(){
+  const {gatilho, idx, dayNum} = getGatilhoDodia();
+  document.getElementById('gatilho-text').textContent = gatilho.texto;
+  document.getElementById('gatilho-number').textContent = `Gatilho #${String(idx+1).padStart(2,'0')}`;
+  document.getElementById('gatilho-cat').textContent = gatilho.cat;
+  document.getElementById('day-count').textContent = `Dia ${dayNum}`;
+  const today = new Date();
+  document.getElementById('today-date').textContent = today.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+
+// AUTH
+let authMode = 'login';
+function toggleAuthMode(){
+  authMode = authMode === 'login' ? 'signup' : 'login';
+  document.getElementById('auth-title').textContent = authMode === 'login' ? 'Bem-vinde!' : 'Criar conta';
+  document.getElementById('auth-desc').textContent = authMode === 'login'
+    ? 'Entre para salvar seus textos e acompanhar sua jornada criativa.'
+    : 'Crie sua conta gratuita e comece a escrever hoje.';
+  document.getElementById('auth-btn').textContent = authMode === 'login' ? 'Entrar' : 'Criar conta';
+  document.getElementById('auth-switch').innerHTML = authMode === 'login'
+    ? 'Não tem conta? <a onclick="toggleAuthMode()">Criar conta</a>'
+    : 'Já tem conta? <a onclick="toggleAuthMode()">Entrar</a>';
+  document.getElementById('auth-error').classList.remove('show');
+  document.getElementById('auth-success').classList.remove('show');
+}
+
+async function handleAuth(){
+  const email = document.getElementById('auth-email').value.trim();
+  const pass = document.getElementById('auth-pass').value;
+  const btn = document.getElementById('auth-btn');
+  const errEl = document.getElementById('auth-error');
+  const sucEl = document.getElementById('auth-success');
+  errEl.classList.remove('show');
+  sucEl.classList.remove('show');
+  if(!email || !pass){ errEl.textContent='Preencha e-mail e senha.'; errEl.classList.add('show'); return; }
+  btn.disabled = true;
+  btn.textContent = 'Aguarde...';
+  try {
+    let res;
+    if(authMode === 'login'){
+      res = await sb.auth.signInWithPassword({email, password:pass});
+    } else {
+      res = await sb.auth.signUp({email, password:pass});
+    }
+    if(res.error) throw res.error;
+    if(authMode === 'signup' && !res.data.session){
+      sucEl.textContent = 'Conta criada! Verifique seu e-mail para confirmar.';
+      sucEl.classList.add('show');
+    }
+  } catch(e){
+    errEl.textContent = e.message || 'Erro ao autenticar.';
+    errEl.classList.add('show');
+  }
+  btn.disabled = false;
+  btn.textContent = authMode === 'login' ? 'Entrar' : 'Criar conta';
+}
+
+function enterAsGuest(){
+  state.isGuest = true;
+  state.user = null;
+  showApp();
+}
+
+async function handleLogout(){
+  if(!state.isGuest) await sb.auth.signOut();
+  state.user = null;
+  state.isGuest = false;
+  state.rascunhos = [];
+  showAuth();
+}
+
+// SHOW/HIDE
+function showAuth(){
+  document.getElementById('auth-screen').style.display='block';
+  document.getElementById('app-screen').style.display='none';
+}
+function showApp(){
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app-screen').style.display='block';
+  updateUserUI();
+  renderGatilho();
+  renderTeoria();
+  if(state.currentPage==='rascunhos') loadRascunhos();
+}
+function updateUserUI(){
+  if(state.user){
+    const email = state.user.email;
+    const name = email.split('@')[0];
+    document.getElementById('user-name').textContent = name;
+    document.getElementById('user-email').textContent = email;
+    document.getElementById('user-avatar').textContent = name[0].toUpperCase();
+  } else {
+    document.getElementById('user-name').textContent = 'Visitante';
+    document.getElementById('user-email').textContent = '';
+    document.getElementById('user-avatar').textContent = '?';
+  }
+}
+
+// NAVIGATE
+function navigate(page){
+  state.currentPage = page;
+  document.querySelectorAll('[data-page]').forEach(el=>{
+    el.classList.toggle('active', el.dataset.page===page);
+  });
+  document.querySelectorAll('.nav-item').forEach(el=>{
+    el.classList.toggle('active', el.dataset.page===page);
+  });
+  if(page==='rascunhos') loadRascunhos();
+  if(window.innerWidth<=768) closeSidebar();
+}
+
+// SIDEBAR MOBILE
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+// TEXTO
+function updateCharCount(){
+  const len = document.getElementById('texto-area').value.length;
+  document.getElementById('char-count').textContent = len;
+}
+
+async function salvarTexto(){
+  const texto = document.getElementById('texto-area').value.trim();
+  if(!texto){ showToast('Escreva algo antes de salvar!'); return; }
+  if(state.isGuest){ showToast('Crie uma conta para salvar textos!'); return; }
+  const {gatilho} = getGatilhoDodia();
+  const btn = document.getElementById('btn-save');
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
+  try {
+    const {error} = await sb.from('rascunhos').insert({
+      user_id: state.user.id,
+      gatilho: gatilho.texto,
+      texto,
+      created_at: new Date().toISOString()
+    });
+    if(error) throw error;
+    showToast('Texto salvo!');
+    document.getElementById('texto-area').value = '';
+    updateCharCount();
+  } catch(e){
+    showToast('Erro ao salvar: '+e.message);
+  }
+  btn.disabled = false;
+  btn.textContent = '◎ Salvar texto';
+}
+
+// RASCUNHOS
+async function loadRascunhos(){
+  const grid = document.getElementById('rascunhos-grid');
+  if(state.isGuest || !state.user){
+    grid.innerHTML = `<div class="empty-state"><div class="icon">◎</div><p>Crie uma conta para ver seus textos salvos aqui.</p></div>`;
+    return;
+  }
+  grid.innerHTML = '<div class="empty-state"><div class="icon">◎</div><p>Carregando...</p></div>';
+  const {data, error} = await sb.from('rascunhos').select('*').eq('user_id', state.user.id).order('created_at',{ascending:false});
+  if(error || !data || data.length===0){
+    grid.innerHTML = `<div class="empty-state"><div class="icon">✦</div><p>Você ainda não tem textos salvos.<br>Escreva no gatilho do dia e salve seu primeiro!</p></div>`;
+    return;
+  }
+  state.rascunhos = data;
+  grid.innerHTML = data.map(r=>`
+    <div class="rascunho-card" onclick="openModal('${r.id}')">
+      <div class="rascunho-gatilho">"${r.gatilho}"</div>
+      <div class="rascunho-texto">${r.texto}</div>
+      <div class="rascunho-meta">
+        <span class="rascunho-date">${formatDate(r.created_at)}</span>
+        <button class="rascunho-del" onclick="event.stopPropagation();deletarRascunho('${r.id}')">Excluir</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function deletarRascunho(id){
+  if(!confirm('Excluir este texto?')) return;
+  await sb.from('rascunhos').delete().eq('id', id);
+  showToast('Texto excluído.');
+  loadRascunhos();
+}
+
+// MODAL
+function openModal(id){
+  const r = state.rascunhos.find(x=>x.id==id);
+  if(!r) return;
+  state.editingId = id;
+  document.getElementById('modal-gatilho').textContent = r.gatilho;
+  document.getElementById('modal-textarea').value = r.texto;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(e){
+  if(e.target.id==='modal-overlay') closeModalDirect();
+}
+function closeModalDirect(){
+  document.getElementById('modal-overlay').classList.remove('open');
+  state.editingId = null;
+}
+async function salvarEdicao(){
+  const texto = document.getElementById('modal-textarea').value.trim();
+  if(!texto) return;
+  await sb.from('rascunhos').update({texto}).eq('id', state.editingId);
+  showToast('Texto atualizado!');
+  closeModalDirect();
+  loadRascunhos();
+}
+
+// SHARE
+function toggleShareMenu(){
+  state.shareMenuOpen = !state.shareMenuOpen;
+  document.getElementById('share-dropdown').classList.toggle('open', state.shareMenuOpen);
+}
+document.addEventListener('click', e=>{
+  if(!e.target.closest('.share-menu')){
+    state.shareMenuOpen = false;
+    document.getElementById('share-dropdown')?.classList.remove('open');
+  }
+});
+
+function shareOn(platform){
+  const texto = document.getElementById('texto-area').value.trim();
+  const {gatilho} = getGatilhoDodia();
+  if(!texto){ showToast('Escreva algo para compartilhar!'); return; }
+  const shareText = `"${gatilho.texto}"\n\n${texto}\n\n✦ Escrito com escreve desirée`;
+  const encoded = encodeURIComponent(shareText);
+  state.shareMenuOpen = false;
+  document.getElementById('share-dropdown').classList.remove('open');
+  if(platform==='twitter'){
+    window.open(`https://twitter.com/intent/tweet?text=${encoded}`,'_blank');
+  } else if(platform==='whatsapp'){
+    window.open(`https://wa.me/?text=${encoded}`,'_blank');
+  } else if(platform==='instagram'){
+    navigator.clipboard.writeText(shareText);
+    showToast('Texto copiado! Cole no Instagram.');
+  } else if(platform==='copy'){
+    navigator.clipboard.writeText(shareText);
+    showToast('Texto copiado!');
+  }
+}
+
+// TEORIA
+function renderTeoria(){
+  const grid = document.getElementById('teoria-grid');
+  grid.innerHTML = TEORIA.map((t,i)=>`
+    <div class="teoria-card" onclick="toggleTeoria(${i})">
+      <div class="teoria-header">
+        <div>
+          <div class="teoria-num">Conceito ${String(i+1).padStart(2,'0')}</div>
+          <div class="teoria-title">${t.titulo}</div>
+        </div>
+        <div class="teoria-toggle">▾</div>
+      </div>
+      <div class="teoria-body">
+        <div class="teoria-content">${t.conteudo}</div>
+      </div>
+    </div>
+  `).join('');
+}
+function toggleTeoria(i){
+  const cards = document.querySelectorAll('.teoria-card');
+  cards[i].classList.toggle('open');
+}
+
+// INIT
+async function init(){
+  const {data:{session}} = await sb.auth.getSession();
+  if(session){
+    state.user = session.user;
+    showApp();
+  } else {
+    showAuth();
+  }
+  sb.auth.onAuthStateChange((_,session)=>{
+    if(session){
+      state.user = session.user;
+      state.isGuest = false;
+      showApp();
+    }
+  });
+}
+
+init();
+</script>
+</body>
+</html>
