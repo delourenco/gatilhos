@@ -576,6 +576,38 @@ textarea::placeholder{color:var(--border);font-style:italic}
 .teoria-content p:last-child{margin-bottom:0}
 .teoria-content strong{color:var(--black);font-weight:600}
 
+/* TEORIA INTRO */
+.teoria-intro{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:1.5rem;
+  margin-bottom:1.5rem;
+}
+.teoria-intro p{
+  font-size:.9rem;
+  color:var(--muted);
+  line-height:1.6;
+  margin-bottom:1rem;
+}
+.teoria-intro p strong{color:var(--black)}
+.teoria-links{display:flex;gap:.75rem;flex-wrap:wrap}
+.teoria-link{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  padding:.6rem 1.1rem;
+  background:var(--cream);
+  border:1px solid var(--border);
+  border-radius:8px;
+  font-size:.82rem;
+  color:var(--red);
+  text-decoration:none;
+  transition:all .2s;
+  font-family:var(--sans);
+}
+.teoria-link:hover{background:var(--red);color:#fff;border-color:var(--red)}
+
 /* MODAL */
 .modal-overlay{
   position:fixed;inset:0;
@@ -800,6 +832,13 @@ textarea::placeholder{color:var(--border);font-style:italic}
           </div>
         </div>
         <div class="teoria-wrap">
+          <div class="teoria-intro">
+            <p>Esses conceitos fazem parte da minha metodologia de <strong>Gestão de Repertório Criativo</strong> — a base do meu trabalho com criatividade e escrita.</p>
+            <div class="teoria-links">
+              <a href="https://desireelourenco.com.br/" target="_blank" class="teoria-link">◈ Conheça meu trabalho</a>
+              <a href="https://escrevedesiree.substack.com/" target="_blank" class="teoria-link">✦ Leia meus textos no Substack</a>
+            </div>
+          </div>
           <div class="teoria-grid" id="teoria-grid"></div>
         </div>
       </div>
@@ -896,39 +935,42 @@ const GATILHOS = [
 const TEORIA = [
   {
     titulo:"A Teoria da Colcha de Retalhos",
-    conteudo:`<p>Criar é como montar uma colcha de retalhos. Nada surge do nada — nossas criações são uma mistura única de tudo o que consumimos: aquele conceito técnico de um curso, um meme visto no intervalo, uma cena de documentário ou uma frase solta ouvida numa cafeteria.</p>
-    <p>Nosso cérebro funciona como uma sacola que precisa estar cheia de "referências" para trabalhar. <strong>Quanto mais diversificados os seus retalhos, mais repertório você terá na hora de criar algo original.</strong></p>
-    <p>A beleza não está no pedaço de tecido isolado, mas na forma como você decide conectá-los para criar um padrão que nunca existiu antes.</p>`
+    conteudo:`<p>Depois de muito tempo estudando o processo criativo, cheguei a uma conclusão que resume bem o que fazemos na prática: <strong>criar é como montar uma colcha de retalhos.</strong></p>
+    <p>Nossas criações são uma mistura única de tudo o que consumimos — aquele conceito técnico de um curso, um meme visto no intervalo, uma cena de documentário ou uma frase solta ouvida numa cafeteria.</p>
+    <p>A beleza não está no pedaço de tecido isolado, mas na forma como você decide conectá-los para criar um padrão que nunca existiu antes. <strong>Sua originalidade já existe na forma como você coleciona, conecta e ressignifica o seu repertório.</strong></p>`
   },
   {
-    titulo:"Criatividade Combinatória",
-    conteudo:`<p>Henri Poincaré já dizia que criar não é fabricar o novo, mas <strong>discernir e unir combinações úteis de elementos que já conhecemos</strong>. Seu trabalho é ser um "curador de conexões".</p>
-    <p>A psicologia da Gestalt nos ensina que nossa mente sempre tenta formar um "todo" a partir de partes menores. Quando você oferece bons retalhos ao seu cérebro, ele naturalmente tenta organizá-los em uma estrutura coesa.</p>
-    <p>Todo mundo pode ter tanto ideias boas quanto muitas ideias — não é um dom reservado para poucos.</p>`
+    titulo:"De onde vêm as ideias?",
+    conteudo:`<p>A boa notícia: ideias não surgem do nada e muito menos são enviadas divinamente. Isso significa que <strong>todo mundo pode ter tanto ideias boas quanto muitas ideias.</strong></p>
+    <p>Henri Poincaré já dizia que criar não é fabricar o novo, mas discernir e unir combinações úteis de elementos que já conhecemos. Seu trabalho é ser um "curador de conexões".</p>
+    <p>A psicologia da Gestalt nos ensina que nossa mente sempre tenta formar um "todo" a partir de partes menores. Quando você oferece bons retalhos ao seu cérebro, ele naturalmente tenta organizá-los em uma estrutura coesa.</p>`
   },
   {
-    titulo:"Modo Difuso e Incubação",
-    conteudo:`<p>Sabe aquela faísca que vem no banho ou numa conversa de bar? É o seu cérebro trabalhando em "modo difuso". Ele pega os retalhos que você guardou e começa a testar conexões enquanto você está distraído.</p>
-    <p><strong>O descanso é o tempo que a sua "costura" precisa para assentar.</strong> A Rede de Modo Padrão (DMN) é ativada justamente quando você não está focado em uma tarefa específica.</p>
-    <p>Trate o descanso como parte do seu cronograma, e não como recompensa pelo cansaço extremo.</p>`
+    titulo:"O Poder do Modo Difuso",
+    conteudo:`<p>Sabe por que as melhores ideias costumam surgir no banho, lavando a louça ou durante uma caminhada? Não é coincidência.</p>
+    <p>Existe um sistema no nosso cérebro chamado <strong>Rede de Modo Padrão (DMN)</strong>, ativado justamente quando você não está focado em uma tarefa específica. Quando você "desliga" o foco direto, essa rede começa a conectar informações de áreas diferentes do cérebro que normalmente não se conversam.</p>
+    <p>É como se, enquanto você descansa, o seu cérebro fosse até o seu repertório e começasse a testar quais retalhos combinam entre si — sem a pressão de entregar um resultado imediato.</p>`
   },
   {
     titulo:"Curadoria Ativa vs. Coleta Passiva",
-    conteudo:`<p><strong>Coleta Passiva:</strong> "Vou salvar isso porque gostei." Gera acúmulo e confusão.</p>
-    <p><strong>Curadoria Ativa:</strong> "Vou salvar isso porque essa solução resolve um problema que costumo enfrentar." Gera inteligência e agilidade.</p>
-    <p>O filtro da intencionalidade muda conforme sua necessidade. Para um repertório geral, filtre por: <strong>Forma</strong> (como foi feito?), <strong>Função</strong> (qual problema resolve?) e <strong>Contexto</strong> (onde poderia ser subvertido?).</p>`
-  },
-  {
-    titulo:"Pensamento Divergente",
-    conteudo:`<p>Não tenha medo de "espalhar os tecidos no chão". O Pensamento Divergente é o momento de testar caminhos, mudar o ângulo, inverter a lógica.</p>
-    <p><strong>Busque o oposto:</strong> tente rascunhar uma solução por um ângulo e depois pelo caminho completamente contrário.</p>
-    <p>Muitas vezes, uma solução inovadora nasce de um caminho que você decidiu descartar — ele serve para abrir sua mente para uma nova conexão que você não veria de outra forma.</p>`
+    conteudo:`<p>Ter acesso à informação nunca foi tão fácil, mas o desafio real é o que fazer com tudo que nos é oferecido. Se você apenas salva tudo o que vê, não está criando um repertório — está acumulando ruído.</p>
+    <p><strong>Coleta Passiva:</strong> "Vou salvar isso porque gostei." Gera acúmulo e confusão.<br/>
+    <strong>Curadoria Ativa:</strong> "Vou salvar isso porque essa solução resolve um problema que costumo enfrentar." Gera inteligência e agilidade.</p>
+    <p>Para um repertório geral, filtre por: <strong>Forma</strong> (como foi feito?), <strong>Função</strong> (qual problema resolve?) e <strong>Contexto</strong> (onde poderia ser subvertido?).</p>`
   },
   {
     titulo:"Constância sem Pressa",
-    conteudo:`<p>A criatividade flui melhor quando encontra um ritmo constante — mas <strong>constância não é pressa</strong>. Você vai precisar aprender a lidar com a autocobrança e as comparações.</p>
-    <p>Encontre sua rotina, seu tempo, sua constância. Reserve espaços no calendário e encare o projeto como algo importante que deve ser prioridade.</p>
-    <p>E sobre perfeição: ao invés de buscá-la, busque objetivos concretos — produto mínimo viável, fases de implementação, upgrades adicionais. A pessoa que você era ontem já adquiriu novas referências. É natural que o trabalho de ontem pareça imperfeito hoje.</p>`
+    conteudo:`<p>A criatividade flui melhor quando encontra um ritmo constante — mas <strong>constância não é pressa.</strong> Você vai precisar aprender a lidar com a autocobrança e as comparações.</p>
+    <p>Pode tratar de esquecer o projeto gigante que o colega do LinkedIn lançou em tempo recorde. As redes sociais são uma vitrine da parte boa — tenha isso em mente.</p>
+    <p>Encontre sua rotina, seu tempo, sua constância. E sobre perfeição: ao invés de buscá-la, busque objetivos concretos. A pessoa que você era ontem já adquiriu novas referências — é natural que o trabalho de ontem pareça imperfeito hoje.</p>`
+  },
+  {
+    titulo:"O Ócio como Ferramenta Criativa",
+    conteudo:`<p>Nossa cultura nos ensina que estar "parado" é o oposto de estar trabalhando. Mas quando falamos de criatividade, a ciência prova que o descanso é o momento em que a mágica das conexões realmente acontece.</p>
+    <p>Três formas de alimentar sua criatividade no dia a dia:</p>
+    <p><strong>Pausas Ativas:</strong> troque 15 minutos de scroll pelo celular por 15 minutos olhando pela janela ou caminhando.<br/>
+    <strong>Sono de Qualidade:</strong> é durante o sono que o cérebro faz a curadoria final, descartando o que não serve.<br/>
+    <strong>Hobby Descompromissado:</strong> uma atividade onde você não precisa ser "produtivo" abre espaço para novos retalhos entrarem.</p>`
   },
 ];
 
