@@ -179,6 +179,21 @@ body{font-family:var(--sans);background:var(--cream);color:var(--black);min-heig
         </div>
       </div>
 
+      <div class="item-card" style="margin-top:1.5rem">
+        <h3 style="font-family:var(--serif);font-size:1rem;margin-bottom:1rem;color:var(--red)">Aba do navegador</h3>
+        <div class="item-fields">
+          <div class="form-group">
+            <label>Título da aba</label>
+            <input class="item-input" id="cfg-site-titulo" placeholder="Ex: escreve desirée · Gatilhos Criativos"/>
+          </div>
+          <div class="form-group" style="margin-top:.75rem">
+            <label>URL do favicon (imagem)</label>
+            <input class="item-input" id="cfg-favicon-url" placeholder="Ex: https://seusite.com/favicon.png"/>
+            <p style="font-size:.75rem;color:var(--muted);margin-top:.4rem">Cole a URL de uma imagem PNG ou ICO. Deixe vazio para usar o símbolo padrão ✦</p>
+          </div>
+        </div>
+      </div>
+
       <div class="save-section">
         <h3>Salvar alterações</h3>
         <p>Clique para salvar todos os textos do site. O site atualiza automaticamente.</p>
@@ -240,6 +255,8 @@ async function carregarTudo(){
     document.getElementById('cfg-cf-card3-texto').value = c.cf_card3_texto || '';
     document.getElementById('cfg-cf-card4-titulo').value = c.cf_card4_titulo || '';
     document.getElementById('cfg-cf-card4-texto').value = c.cf_card4_texto || '';
+    document.getElementById('cfg-site-titulo').value = c.site_titulo || '';
+    document.getElementById('cfg-favicon-url').value = c.favicon_url || '';
   }
 }
 
@@ -344,7 +361,9 @@ async function salvarTextosSite(){
       cf_card3_titulo: document.getElementById('cfg-cf-card3-titulo').value,
       cf_card3_texto: document.getElementById('cfg-cf-card3-texto').value,
       cf_card4_titulo: document.getElementById('cfg-cf-card4-titulo').value,
-      cf_card4_texto: document.getElementById('cfg-cf-card4-texto').value
+      cf_card4_texto: document.getElementById('cfg-cf-card4-texto').value,
+      site_titulo: document.getElementById('cfg-site-titulo').value,
+      favicon_url: document.getElementById('cfg-favicon-url').value
     }).eq('id', 1);
     if(error) throw error;
     showToast('Textos salvos!');

@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title id="page-title">escreve desirée · Gatilhos Criativos</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>"/>
+<link id="favicon" rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -926,6 +926,8 @@ async function carregarDados(){
       if(c.cf_card3_texto) document.getElementById('cf-card3-texto').textContent = c.cf_card3_texto;
       if(c.cf_card4_titulo) document.getElementById('cf-card4-titulo').textContent = c.cf_card4_titulo;
       if(c.cf_card4_texto) document.getElementById('cf-card4-texto').textContent = c.cf_card4_texto;
+      if(c.site_titulo) document.getElementById('page-title').textContent = c.site_titulo;
+      if(c.favicon_url) document.getElementById('favicon').href = c.favicon_url;
     }
   } catch(e){ console.error('Erro ao carregar dados:', e); }
 }
