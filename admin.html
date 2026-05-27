@@ -136,9 +136,52 @@ body{font-family:var(--sans);background:var(--cream);color:var(--black);min-heig
           </div>
         </div>
       </div>
+
+      <div class="item-card" style="margin-top:1.5rem">
+        <h3 style="font-family:var(--serif);font-size:1rem;margin-bottom:1rem;color:var(--red)">Página "Como funciona?"</h3>
+        <div class="item-fields">
+          <div class="form-group">
+            <label>Título da página</label>
+            <input class="item-input" id="cfg-cf-titulo" placeholder="Ex: Como funciona?"/>
+          </div>
+          <div class="form-group" style="margin-top:.75rem">
+            <label>Card 1 — Título</label>
+            <input class="item-input" id="cfg-cf-card1-titulo" placeholder="Ex: O Gatilho Diário"/>
+          </div>
+          <div class="form-group" style="margin-top:.5rem">
+            <label>Card 1 — Texto</label>
+            <textarea class="item-textarea" id="cfg-cf-card1-texto"></textarea>
+          </div>
+          <div class="form-group" style="margin-top:.75rem">
+            <label>Card 2 — Título</label>
+            <input class="item-input" id="cfg-cf-card2-titulo" placeholder="Ex: O Espaço de Escrita"/>
+          </div>
+          <div class="form-group" style="margin-top:.5rem">
+            <label>Card 2 — Texto</label>
+            <textarea class="item-textarea" id="cfg-cf-card2-texto"></textarea>
+          </div>
+          <div class="form-group" style="margin-top:.75rem">
+            <label>Card 3 — Título</label>
+            <input class="item-input" id="cfg-cf-card3-titulo" placeholder="Ex: Meus Textos"/>
+          </div>
+          <div class="form-group" style="margin-top:.5rem">
+            <label>Card 3 — Texto</label>
+            <textarea class="item-textarea" id="cfg-cf-card3-texto"></textarea>
+          </div>
+          <div class="form-group" style="margin-top:.75rem">
+            <label>Card 4 — Título</label>
+            <input class="item-input" id="cfg-cf-card4-titulo" placeholder="Ex: Compartilhar"/>
+          </div>
+          <div class="form-group" style="margin-top:.5rem">
+            <label>Card 4 — Texto</label>
+            <textarea class="item-textarea" id="cfg-cf-card4-texto"></textarea>
+          </div>
+        </div>
+      </div>
+
       <div class="save-section">
         <h3>Salvar alterações</h3>
-        <p>Clique para salvar os textos da tela inicial. O site atualiza automaticamente.</p>
+        <p>Clique para salvar todos os textos do site. O site atualiza automaticamente.</p>
         <button class="btn-save" id="btn-salvar-textos" onclick="salvarTextosSite()">Salvar textos</button>
       </div>
     </div>
@@ -184,9 +227,19 @@ async function carregarTudo(){
   renderGatilhos();
   renderTeoria();
   if(cRes.data){
-    document.getElementById('cfg-tagline').value = cRes.data.login_tagline || '';
-    document.getElementById('cfg-titulo').value = cRes.data.login_titulo || '';
-    document.getElementById('cfg-desc').value = cRes.data.login_desc || '';
+    const c = cRes.data;
+    document.getElementById('cfg-tagline').value = c.login_tagline || '';
+    document.getElementById('cfg-titulo').value = c.login_titulo || '';
+    document.getElementById('cfg-desc').value = c.login_desc || '';
+    document.getElementById('cfg-cf-titulo').value = c.cf_titulo || '';
+    document.getElementById('cfg-cf-card1-titulo').value = c.cf_card1_titulo || '';
+    document.getElementById('cfg-cf-card1-texto').value = c.cf_card1_texto || '';
+    document.getElementById('cfg-cf-card2-titulo').value = c.cf_card2_titulo || '';
+    document.getElementById('cfg-cf-card2-texto').value = c.cf_card2_texto || '';
+    document.getElementById('cfg-cf-card3-titulo').value = c.cf_card3_titulo || '';
+    document.getElementById('cfg-cf-card3-texto').value = c.cf_card3_texto || '';
+    document.getElementById('cfg-cf-card4-titulo').value = c.cf_card4_titulo || '';
+    document.getElementById('cfg-cf-card4-texto').value = c.cf_card4_texto || '';
   }
 }
 
@@ -282,7 +335,16 @@ async function salvarTextosSite(){
     const {error} = await sb.from('configuracoes').update({
       login_tagline: document.getElementById('cfg-tagline').value,
       login_titulo: document.getElementById('cfg-titulo').value,
-      login_desc: document.getElementById('cfg-desc').value
+      login_desc: document.getElementById('cfg-desc').value,
+      cf_titulo: document.getElementById('cfg-cf-titulo').value,
+      cf_card1_titulo: document.getElementById('cfg-cf-card1-titulo').value,
+      cf_card1_texto: document.getElementById('cfg-cf-card1-texto').value,
+      cf_card2_titulo: document.getElementById('cfg-cf-card2-titulo').value,
+      cf_card2_texto: document.getElementById('cfg-cf-card2-texto').value,
+      cf_card3_titulo: document.getElementById('cfg-cf-card3-titulo').value,
+      cf_card3_texto: document.getElementById('cfg-cf-card3-texto').value,
+      cf_card4_titulo: document.getElementById('cfg-cf-card4-titulo').value,
+      cf_card4_texto: document.getElementById('cfg-cf-card4-texto').value
     }).eq('id', 1);
     if(error) throw error;
     showToast('Textos salvos!');
