@@ -5,16 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Admin · escreve desirée</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --cream:#f7efe0;--red:#800000;--red-light:#a00000;
-  --black:#111;--muted:#5a4a3a;--border:#d4c4a8;
-  --serif:'Playfair Display',serif;--sans:'Inter',sans-serif;
-}
+:root{--cream:#f7efe0;--red:#800000;--red-light:#a00000;--black:#111;--muted:#5a4a3a;--border:#d4c4a8;--serif:'Playfair Display',serif;--sans:'Inter',sans-serif}
 body{font-family:var(--sans);background:var(--cream);color:var(--black);min-height:100vh;font-size:15px}
-
-/* LOGIN */
 .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
 .login-box{background:#fff;border:1px solid var(--border);border-radius:16px;padding:3rem 2.5rem;max-width:400px;width:100%;text-align:center}
 .login-logo{font-family:var(--serif);font-size:1.4rem;color:var(--red);font-style:italic;margin-bottom:.25rem}
@@ -27,27 +22,22 @@ body{font-family:var(--sans);background:var(--cream);color:var(--black);min-heig
 .btn{width:100%;padding:.85rem;background:var(--red);border:none;border-radius:8px;color:#fff;font-family:var(--sans);font-size:.9rem;font-weight:500;cursor:pointer;transition:background .2s}
 .btn:hover{background:var(--red-light)}
 .error{color:var(--red);font-size:.8rem;margin-top:.75rem}
-
-/* ADMIN */
 .admin{display:none}
 .header{background:var(--red);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between}
 .header .brand{font-family:var(--serif);color:#fff;font-size:1.1rem;font-style:italic}
 .header .badge{background:rgba(255,255,255,0.2);color:#fff;font-size:.7rem;padding:.3rem .7rem;border-radius:20px;letter-spacing:.08em}
 .btn-logout{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:.4rem .9rem;border-radius:6px;font-size:.8rem;cursor:pointer;font-family:var(--sans)}
 .btn-logout:hover{background:rgba(255,255,255,0.2)}
-
 .container{max-width:900px;margin:0 auto;padding:2rem}
-.tabs{display:flex;gap:.5rem;margin-bottom:2rem;border-bottom:2px solid var(--border);padding-bottom:0}
+.tabs{display:flex;gap:.5rem;margin-bottom:2rem;border-bottom:2px solid var(--border)}
 .tab{padding:.75rem 1.5rem;background:none;border:none;font-family:var(--sans);font-size:.85rem;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s}
 .tab.active{color:var(--red);border-bottom-color:var(--red);font-weight:500}
 .tab-content{display:none}
 .tab-content.active{display:block}
-
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
 .section-header h2{font-family:var(--serif);font-size:1.3rem}
-.btn-add{padding:.6rem 1.2rem;background:var(--red);border:none;border-radius:8px;color:#fff;font-family:var(--sans);font-size:.82rem;cursor:pointer;display:flex;align-items:center;gap:.4rem}
+.btn-add{padding:.6rem 1.2rem;background:var(--red);border:none;border-radius:8px;color:#fff;font-family:var(--sans);font-size:.82rem;cursor:pointer}
 .btn-add:hover{background:var(--red-light)}
-
 .item-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:.75rem}
 .item-header{display:flex;align-items:flex-start;gap:1rem;margin-bottom:.75rem}
 .item-num{font-size:.7rem;color:var(--red);font-weight:600;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;padding-top:.2rem}
@@ -61,27 +51,19 @@ body{font-family:var(--sans);background:var(--cream);color:var(--black);min-heig
 .btn-del:hover{border-color:var(--red);color:var(--red);background:#fff0f0}
 .btn-move{padding:.4rem .6rem;background:none;border:1px solid var(--border);border-radius:6px;font-size:.75rem;color:var(--muted);cursor:pointer;transition:all .2s}
 .btn-move:hover{border-color:var(--red);color:var(--red)}
-
-.gerar-section{margin-top:2rem;background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.5rem}
-.gerar-section h3{font-family:var(--serif);font-size:1.1rem;margin-bottom:.5rem}
-.gerar-section p{font-size:.85rem;color:var(--muted);margin-bottom:1rem;line-height:1.5}
-.btn-gerar{padding:.75rem 1.5rem;background:var(--red);border:none;border-radius:8px;color:#fff;font-family:var(--sans);font-size:.85rem;font-weight:500;cursor:pointer;margin-bottom:1rem;display:inline-flex;align-items:center;gap:.5rem}
-.btn-gerar:hover{background:var(--red-light)}
-.code-output{background:#1a1a1a;color:#e8e8e8;border-radius:8px;padding:1.25rem;font-family:monospace;font-size:.78rem;line-height:1.6;white-space:pre-wrap;word-break:break-all;max-height:300px;overflow-y:auto;display:none;margin-bottom:.75rem}
-.btn-copy{padding:.5rem 1rem;background:var(--cream);border:1px solid var(--border);border-radius:6px;font-size:.8rem;cursor:pointer;font-family:var(--sans);display:none}
-.btn-copy:hover{border-color:var(--red);color:var(--red)}
-
+.save-section{margin-top:2rem;background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.5rem}
+.save-section h3{font-family:var(--serif);font-size:1.1rem;margin-bottom:.5rem}
+.save-section p{font-size:.85rem;color:var(--muted);margin-bottom:1rem;line-height:1.5}
+.btn-save{padding:.75rem 1.5rem;background:var(--red);border:none;border-radius:8px;color:#fff;font-family:var(--sans);font-size:.85rem;font-weight:500;cursor:pointer}
+.btn-save:hover{background:var(--red-light)}
+.btn-save:disabled{opacity:.6;cursor:not-allowed}
 .toast{position:fixed;bottom:2rem;right:2rem;background:var(--black);color:#fff;padding:.75rem 1.25rem;border-radius:10px;font-size:.85rem;opacity:0;transform:translateY(10px);transition:all .3s;z-index:999;pointer-events:none}
 .toast.show{opacity:1;transform:translateY(0)}
-
-.instrucoes{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.5rem;font-size:.82rem;color:var(--muted);line-height:1.6}
-.instrucoes strong{color:var(--black)}
+.loading{text-align:center;padding:3rem;color:var(--muted);font-size:.9rem}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div class="login-wrap" id="login-screen">
   <div class="login-box">
     <div class="login-logo">escreve desirée</div>
@@ -89,60 +71,48 @@ body{font-family:var(--sans);background:var(--cream);color:var(--black);min-heig
     <h2>Acesso restrito</h2>
     <div class="form-group">
       <label>Senha</label>
-      <input type="password" id="senha-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()"/>
+      <input type="password" id="senha-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')fazerLogin()"/>
     </div>
-    <button class="btn" onclick="login()">Entrar</button>
+    <button class="btn" onclick="fazerLogin()">Entrar</button>
     <div class="error" id="login-error"></div>
   </div>
 </div>
 
-<!-- ADMIN -->
 <div class="admin" id="admin-screen">
   <div class="header">
     <div class="brand">escreve desirée</div>
     <div class="badge">ADMIN</div>
-    <button class="btn-logout" onclick="logout()">Sair</button>
+    <button class="btn-logout" onclick="fazerLogout()">Sair</button>
   </div>
-
   <div class="container">
     <div class="tabs">
-      <button class="tab active" onclick="switchTab('gatilhos')">Gatilhos</button>
-      <button class="tab" onclick="switchTab('teoria')">Teoria Criativa</button>
+      <button class="tab active" onclick="trocarAba('gatilhos')">Gatilhos</button>
+      <button class="tab" onclick="trocarAba('teoria')">Teoria Criativa</button>
     </div>
 
-    <!-- GATILHOS -->
     <div class="tab-content active" id="tab-gatilhos">
-      <div class="instrucoes">
-        <strong>Como usar:</strong> edite, adicione ou remova gatilhos abaixo. Quando terminar, clique em "Gerar código" e substitua o trecho correspondente no arquivo <code>index.html</code>.
-      </div>
       <div class="section-header">
         <h2>Gatilhos de Escrita</h2>
-        <button class="btn-add" onclick="addGatilho()">+ Adicionar gatilho</button>
+        <button class="btn-add" onclick="addGatilho()">+ Adicionar</button>
       </div>
-      <div id="gatilhos-list"></div>
-      <div class="gerar-section">
-        <h3>Gerar código</h3>
-        <p>Clique para salvar os gatilhos direto no banco de dados. O site atualiza automaticamente!</p>
-        <button class="btn-gerar" onclick="gerarGatilhos()">Salvar gatilhos</button>
-
+      <div id="lista-gatilhos"><div class="loading">Carregando...</div></div>
+      <div class="save-section">
+        <h3>Salvar alterações</h3>
+        <p>Clique para salvar todos os gatilhos no banco de dados. O site atualiza automaticamente.</p>
+        <button class="btn-save" id="btn-salvar-gatilhos" onclick="salvarGatilhos()">Salvar gatilhos</button>
       </div>
     </div>
 
-    <!-- TEORIA -->
     <div class="tab-content" id="tab-teoria">
-      <div class="instrucoes">
-        <strong>Como usar:</strong> edite os conceitos abaixo. O conteúdo aceita HTML simples (use <code>&lt;strong&gt;</code> para negrito e <code>&lt;br/&gt;</code> para quebra de linha). Quando terminar, clique em "Gerar código".
-      </div>
       <div class="section-header">
         <h2>Teoria Criativa</h2>
-        <button class="btn-add" onclick="addTeoria()">+ Adicionar conceito</button>
+        <button class="btn-add" onclick="addTeoria()">+ Adicionar</button>
       </div>
-      <div id="teoria-list"></div>
-      <div class="gerar-section">
-        <h3>Gerar código</h3>
-        <p>Clique para salvar os conceitos direto no banco de dados. O site atualiza automaticamente!</p>
-        <button class="btn-gerar" onclick="gerarTeoria()">Salvar teoria</button>
-
+      <div id="lista-teoria"><div class="loading">Carregando...</div></div>
+      <div class="save-section">
+        <h3>Salvar alterações</h3>
+        <p>Clique para salvar os conceitos no banco de dados. O site atualiza automaticamente.</p>
+        <button class="btn-save" id="btn-salvar-teoria" onclick="salvarTeoria()">Salvar teoria</button>
       </div>
     </div>
   </div>
@@ -151,244 +121,129 @@ body{font-family:var(--sans);background:var(--cream);color:var(--black);min-heig
 <div class="toast" id="toast"></div>
 
 <script>
-// SUPABASE
 const SUPABASE_URL = 'https://zaqdfxgzwhmhuxqfasda.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_DIXa0leuo9NzyGEMtYPGNg_e_o7BiJA';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SENHA = 'escreve2025';
 
-// SENHA — mude para a senha que quiser
-const SENHA_ADMIN = 'escreve2025';
+let dadosGatilhos = [];
+let dadosTeoria = [];
 
-// DADOS
-let gatilhos = [];
-let teoria = [];
-
-async function carregarDados(){
-  const [gRes, tRes] = await Promise.all([
-    sb.from('gatilhos').select('*').order('ordem'),
-    sb.from('teoria').select('*').order('ordem')
-  ]);
-  if(gRes.data) gatilhos = gRes.data;
-  if(tRes.data) teoria = tRes.data;
-  renderGatilhos();
-  renderTeoria();
-}
-
-// DADOS INICIAIS FALLBACK
-let gatilhosFallback = [
-  {texto:"Escreva sobre uma cor que você nunca conseguiu descrever com palavras.",cat:"Sensorial"},
-  {texto:"Seu personagem encontra uma carta que foi escrita para ele, mas nunca enviada.",cat:"Narrativa"},
-  {texto:"Descreva um lugar onde o tempo parece não existir.",cat:"Espaço"},
-  {texto:"Escreva a última conversa entre duas pessoas que se amaram muito.",cat:"Relações"},
-  {texto:"O que você diria para a versão de você de 10 anos atrás?",cat:"Memória"},
-  {texto:"Crie um personagem definido apenas pelo que ele recusa a fazer.",cat:"Personagem"},
-  {texto:"Descreva o silêncio de um quarto específico que você conhece.",cat:"Sensorial"},
-  {texto:"Escreva sobre uma escolha que mudou tudo — sem citar a escolha.",cat:"Narrativa"},
-  {texto:"Seu personagem encontra um objeto perdido há anos. O que sente?",cat:"Emoção"},
-  {texto:"Escreva uma cena inteira usando apenas diálogos.",cat:"Técnica"},
-  {texto:"O que existe do outro lado de uma janela que ninguém nunca abriu?",cat:"Imaginação"},
-  {texto:"Descreva uma despedida sem usar as palavras 'adeus' ou 'tchau'.",cat:"Técnica"},
-  {texto:"Escreva sobre alguém que coleciona coisas invisíveis.",cat:"Personagem"},
-  {texto:"Qual é o cheiro da saudade?",cat:"Sensorial"},
-  {texto:"Escreva um segredo que o narrador nunca revelaria em voz alta.",cat:"Narrativa"},
-  {texto:"Crie um lugar que só existe quando ninguém está olhando.",cat:"Imaginação"},
-  {texto:"Escreva sobre a primeira vez que você entendeu que alguém era humano de verdade.",cat:"Relações"},
-  {texto:"Seu personagem acorda com uma memória que não é dele.",cat:"Ficção"},
-  {texto:"Escreva sobre o que permanece depois que tudo acaba.",cat:"Emoção"},
-  {texto:"Descreva um movimento em câmera lenta.",cat:"Técnica"},
-  {texto:"O que o seu personagem faz quando ninguém está assistindo?",cat:"Personagem"},
-  {texto:"Escreva sobre uma promessa que foi cumprida tarde demais.",cat:"Tempo"},
-  {texto:"Crie um ritual inventado por uma pessoa solitária.",cat:"Imaginação"},
-  {texto:"Escreva sobre a beleza de algo que está se deteriorando.",cat:"Observação"},
-  {texto:"O que existe no espaço entre duas respirações?",cat:"Sensorial"},
-  {texto:"Escreva uma cena ambientada às 3h da manhã.",cat:"Tempo"},
-  {texto:"Seu personagem recebe uma segunda chance. Ele a quer?",cat:"Narrativa"},
-  {texto:"Descreva um amor sem romantizá-lo.",cat:"Relações"},
-  {texto:"Escreva sobre uma voz que você reconheceria em qualquer lugar.",cat:"Memória"},
-  {texto:"O que acontece quando duas solidões se encontram?",cat:"Relações"},
-  {texto:"Crie um personagem que mente para si mesmo com maestria.",cat:"Personagem"},
-  {texto:"Escreva sobre um objeto que guarda uma história que ninguém mais sabe.",cat:"Memória"},
-  {texto:"Descreva a sensação de estar em um lugar pela última vez.",cat:"Emoção"},
-  {texto:"Escreva sobre algo que você só consegue ver de lado.",cat:"Observação"},
-  {texto:"Seu personagem descobre que estava errado sobre algo fundamental.",cat:"Narrativa"},
-  {texto:"Escreva sobre a passagem do tempo usando apenas o corpo.",cat:"Técnica"},
-  {texto:"O que o silêncio diz quando está com raiva?",cat:"Imaginação"},
-  {texto:"Crie um lugar que existe apenas na memória de uma pessoa.",cat:"Memória"},
-  {texto:"Escreva sobre o exato momento em que algo muda para sempre.",cat:"Tempo"},
-  {texto:"Descreva uma alegria que não tem nome.",cat:"Emoção"},
-  {texto:"Seu personagem sente falta de algo que nunca existiu.",cat:"Emoção"},
-  {texto:"Escreva sobre a distância entre duas pessoas no mesmo quarto.",cat:"Relações"},
-  {texto:"O que você deixaria para trás se pudesse recomeçar do zero?",cat:"Reflexão"},
-  {texto:"Crie um personagem através de seus medos mais específicos.",cat:"Personagem"},
-  {texto:"Escreva sobre uma conversa que nunca aconteceu mas deveria.",cat:"Relações"},
-  {texto:"Descreva o peso de uma decisão antes de tomá-la.",cat:"Emoção"},
-  {texto:"Escreva sobre alguém aprendendo algo pela última vez.",cat:"Tempo"},
-  {texto:"O que existe entre o que você diz e o que você quer dizer?",cat:"Reflexão"},
-  {texto:"Crie um mundo onde uma regra simples mudou tudo.",cat:"Ficção"},
-  {texto:"Escreva sobre o momento exato em que você parou de ser criança.",cat:"Memória"},
-  {texto:"Descreva uma saudade sem objeto — de algo que você não sabe ao certo.",cat:"Emoção"},
-  {texto:"Escreva uma cena em que duas pessoas dizem coisas opostas ao que sentem.",cat:"Técnica"},
-  {texto:"O que o seu personagem carrega que ninguém vê?",cat:"Personagem"},
-  {texto:"Escreva sobre um começo disfarçado de fim.",cat:"Narrativa"},
-  {texto:"Descreva o som da sua cidade em um horário específico.",cat:"Sensorial"},
-  {texto:"Escreva sobre algo que você só entendeu depois de perder.",cat:"Memória"},
-  {texto:"Crie um personagem que é definido por uma ausência.",cat:"Personagem"},
-  {texto:"O que permanece de uma pessoa depois que ela vai embora?",cat:"Reflexão"},
-  {texto:"Escreva sobre um hábito carregado de significado.",cat:"Observação"},
-  {texto:"Descreva o exato instante antes de algo inevitável.",cat:"Narrativa"},
-];
-
-let teoria = [
-  {titulo:"A Teoria da Colcha de Retalhos",conteudo:`<p>Depois de muito tempo estudando o processo criativo, cheguei a uma conclusão que resume bem o que fazemos na prática: <strong>criar é como montar uma colcha de retalhos.</strong></p>\n    <p>Nossas criações são uma mistura única de tudo o que consumimos — aquele conceito técnico de um curso, um meme visto no intervalo, uma cena de documentário ou uma frase solta ouvida numa cafeteria.</p>\n    <p>A beleza não está no pedaço de tecido isolado, mas na forma como você decide conectá-los para criar um padrão que nunca existiu antes. <strong>Sua originalidade já existe na forma como você coleciona, conecta e ressignifica o seu repertório.</strong></p>`},
-  {titulo:"De onde vêm as ideias?",conteudo:`<p>A boa notícia: ideias não surgem do nada e muito menos são enviadas divinamente. Isso significa que <strong>todo mundo pode ter tanto ideias boas quanto muitas ideias.</strong></p>\n    <p>Henri Poincaré já dizia que criar não é fabricar o novo, mas discernir e unir combinações úteis de elementos que já conhecemos. Seu trabalho é ser um "curador de conexões".</p>\n    <p>A psicologia da Gestalt nos ensina que nossa mente sempre tenta formar um "todo" a partir de partes menores. Quando você oferece bons retalhos ao seu cérebro, ele naturalmente tenta organizá-los em uma estrutura coesa.</p>`},
-  {titulo:"O Poder do Modo Difuso",conteudo:`<p>Sabe por que as melhores ideias costumam surgir no banho, lavando a louça ou durante uma caminhada? Não é coincidência.</p>\n    <p>Existe um sistema no nosso cérebro chamado <strong>Rede de Modo Padrão (DMN)</strong>, ativado justamente quando você não está focado em uma tarefa específica. Quando você "desliga" o foco direto, essa rede começa a conectar informações de áreas diferentes do cérebro que normalmente não se conversam.</p>\n    <p>É como se, enquanto você descansa, o seu cérebro fosse até o seu repertório e começasse a testar quais retalhos combinam entre si — sem a pressão de entregar um resultado imediato.</p>`},
-  {titulo:"Curadoria Ativa vs. Coleta Passiva",conteudo:`<p>Ter acesso à informação nunca foi tão fácil, mas o desafio real é o que fazer com tudo que nos é oferecido. Se você apenas salva tudo o que vê, não está criando um repertório — está acumulando ruído.</p>\n    <p><strong>Coleta Passiva:</strong> "Vou salvar isso porque gostei." Gera acúmulo e confusão.<br/>\n    <strong>Curadoria Ativa:</strong> "Vou salvar isso porque essa solução resolve um problema que costumo enfrentar." Gera inteligência e agilidade.</p>\n    <p>Para um repertório geral, filtre por: <strong>Forma</strong> (como foi feito?), <strong>Função</strong> (qual problema resolve?) e <strong>Contexto</strong> (onde poderia ser subvertido?).</p>`},
-  {titulo:"Constância sem Pressa",conteudo:`<p>A criatividade flui melhor quando encontra um ritmo constante — mas <strong>constância não é pressa.</strong> Você vai precisar aprender a lidar com a autocobrança e as comparações.</p>\n    <p>Pode tratar de esquecer o projeto gigante que o colega do LinkedIn lançou em tempo recorde. As redes sociais são uma vitrine da parte boa — tenha isso em mente.</p>\n    <p>Encontre sua rotina, seu tempo, sua constância. E sobre perfeição: ao invés de buscá-la, busque objetivos concretos. A pessoa que você era ontem já adquiriu novas referências — é natural que o trabalho de ontem pareça imperfeito hoje.</p>`},
-  {titulo:"O Ocio como Ferramenta Criativa",conteudo:`<p>Nossa cultura nos ensina que estar "parado" é o oposto de estar trabalhando. Mas quando falamos de criatividade, a ciência prova que o descanso é o momento em que a mágica das conexões realmente acontece.</p>\n    <p>Três formas de alimentar sua criatividade no dia a dia:</p>\n    <p><strong>Pausas Ativas:</strong> troque 15 minutos de scroll pelo celular por 15 minutos olhando pela janela ou caminhando.<br/>\n    <strong>Sono de Qualidade:</strong> é durante o sono que o cérebro faz a curadoria final, descartando o que não serve.<br/>\n    <strong>Hobby Descompromissado:</strong> uma atividade onde você não precisa ser "produtivo" abre espaço para novos retalhos entrarem.</p>`},
-];
-
-// AUTH
-function login(){
+function fazerLogin(){
   const s = document.getElementById('senha-input').value;
-  if(s === SENHA_ADMIN){
+  if(s === SENHA){
     document.getElementById('login-screen').style.display='none';
     document.getElementById('admin-screen').style.display='block';
-    carregarDados();
+    carregarTudo();
   } else {
     document.getElementById('login-error').textContent='Senha incorreta.';
   }
 }
-function logout(){
+
+function fazerLogout(){
   document.getElementById('login-screen').style.display='flex';
   document.getElementById('admin-screen').style.display='none';
   document.getElementById('senha-input').value='';
 }
 
-// TABS
-function switchTab(tab){
-  document.querySelectorAll('.tab').forEach((t,i)=>{
-    t.classList.toggle('active', (i===0&&tab==='gatilhos')||(i===1&&tab==='teoria'));
-  });
-  document.getElementById('tab-gatilhos').classList.toggle('active', tab==='gatilhos');
-  document.getElementById('tab-teoria').classList.toggle('active', tab==='teoria');
+async function carregarTudo(){
+  const [gRes, tRes] = await Promise.all([
+    sb.from('gatilhos').select('*').order('ordem'),
+    sb.from('teoria').select('*').order('ordem')
+  ]);
+  dadosGatilhos = gRes.data || [];
+  dadosTeoria = tRes.data || [];
+  renderGatilhos();
+  renderTeoria();
 }
 
-// GATILHOS
+function trocarAba(aba){
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    t.classList.toggle('active',(i===0&&aba==='gatilhos')||(i===1&&aba==='teoria'));
+  });
+  document.getElementById('tab-gatilhos').classList.toggle('active',aba==='gatilhos');
+  document.getElementById('tab-teoria').classList.toggle('active',aba==='teoria');
+}
+
 function renderGatilhos(){
-  const list = document.getElementById('gatilhos-list');
-  list.innerHTML = gatilhos.map((g,i)=>`
+  document.getElementById('lista-gatilhos').innerHTML = dadosGatilhos.map((g,i)=>`
     <div class="item-card">
       <div class="item-header">
         <div class="item-num">#${String(i+1).padStart(2,'0')}</div>
         <div class="item-fields">
-          <input class="item-input" value="${escHtml(g.texto)}" onchange="gatilhos[${i}].texto=this.value" placeholder="Texto do gatilho"/>
-          <input class="item-input" value="${escHtml(g.cat)}" onchange="gatilhos[${i}].cat=this.value" placeholder="Categoria (ex: Sensorial, Narrativa...)"/>
+          <input class="item-input" value="${esc(g.texto)}" onchange="dadosGatilhos[${i}].texto=this.value" placeholder="Texto do gatilho"/>
+          <input class="item-input" value="${esc(g.cat)}" onchange="dadosGatilhos[${i}].cat=this.value" placeholder="Categoria"/>
         </div>
       </div>
       <div class="item-actions">
-        ${i>0?`<button class="btn-move" onclick="moverGatilho(${i},-1)">↑</button>`:''}
-        ${i<gatilhos.length-1?`<button class="btn-move" onclick="moverGatilho(${i},1)">↓</button>`:''}
-        <button class="btn-del" onclick="removerGatilho(${i})">Remover</button>
+        ${i>0?`<button class="btn-move" onclick="mover(dadosGatilhos,${i},-1,renderGatilhos)">↑</button>`:''}
+        ${i<dadosGatilhos.length-1?`<button class="btn-move" onclick="mover(dadosGatilhos,${i},1,renderGatilhos)">↓</button>`:''}
+        <button class="btn-del" onclick="dadosGatilhos.splice(${i},1);renderGatilhos()">Remover</button>
       </div>
-    </div>
-  `).join('');
-}
-function addGatilho(){
-  gatilhos.push({texto:'',cat:''});
-  renderGatilhos();
-  document.getElementById('gatilhos-list').lastElementChild.scrollIntoView({behavior:'smooth'});
-}
-function removerGatilho(i){
-  if(!confirm('Remover este gatilho?'))return;
-  gatilhos.splice(i,1);
-  renderGatilhos();
-}
-function moverGatilho(i,dir){
-  const j=i+dir;
-  [gatilhos[i],gatilhos[j]]=[gatilhos[j],gatilhos[i]];
-  renderGatilhos();
-}
-async function gerarGatilhos(){
-  const btn = event.target;
-  btn.textContent = 'Salvando...';
-  btn.disabled = true;
-  try {
-    await sb.from('gatilhos').delete().neq('id', 0);
-    const rows = gatilhos.map((g,i)=>({texto:g.texto, cat:g.cat, ordem:i+1}));
-    const {error} = await sb.from('gatilhos').insert(rows);
-    if(error) throw error;
-    showToast('Gatilhos salvos no Supabase!');
-  } catch(e){
-    showToast('Erro: '+e.message);
-  }
-  btn.textContent = 'Salvar gatilhos';
-  btn.disabled = false;
+    </div>`).join('');
 }
 
-// TEORIA
+function addGatilho(){
+  dadosGatilhos.push({texto:'',cat:''});
+  renderGatilhos();
+  document.getElementById('lista-gatilhos').lastElementChild.scrollIntoView({behavior:'smooth'});
+}
+
+async function salvarGatilhos(){
+  const btn = document.getElementById('btn-salvar-gatilhos');
+  btn.disabled=true; btn.textContent='Salvando...';
+  try{
+    await sb.from('gatilhos').delete().neq('id',0);
+    const rows = dadosGatilhos.map((g,i)=>({texto:g.texto,cat:g.cat,ordem:i+1}));
+    const {error} = await sb.from('gatilhos').insert(rows);
+    if(error) throw error;
+    await carregarTudo();
+    showToast('Gatilhos salvos!');
+  }catch(e){ showToast('Erro: '+e.message); }
+  btn.disabled=false; btn.textContent='Salvar gatilhos';
+}
+
 function renderTeoria(){
-  const list = document.getElementById('teoria-list');
-  list.innerHTML = teoria.map((t,i)=>`
+  document.getElementById('lista-teoria').innerHTML = dadosTeoria.map((t,i)=>`
     <div class="item-card">
       <div class="item-header">
         <div class="item-num">${String(i+1).padStart(2,'0')}</div>
         <div class="item-fields">
-          <input class="item-input" value="${escHtml(t.titulo)}" onchange="teoria[${i}].titulo=this.value" placeholder="Título do conceito"/>
-          <textarea class="item-textarea" onchange="teoria[${i}].conteudo=this.value" placeholder="Conteúdo (aceita HTML: &lt;strong&gt;, &lt;br/&gt;, &lt;p&gt;)">${escHtml(t.conteudo)}</textarea>
+          <input class="item-input" value="${esc(t.titulo)}" onchange="dadosTeoria[${i}].titulo=this.value" placeholder="Título"/>
+          <textarea class="item-textarea" onchange="dadosTeoria[${i}].conteudo=this.value" placeholder="Conteúdo (aceita HTML)">${esc(t.conteudo)}</textarea>
         </div>
       </div>
       <div class="item-actions">
-        ${i>0?`<button class="btn-move" onclick="moverTeoria(${i},-1)">↑</button>`:''}
-        ${i<teoria.length-1?`<button class="btn-move" onclick="moverTeoria(${i},1)">↓</button>`:''}
-        <button class="btn-del" onclick="removerTeoria(${i})">Remover</button>
+        ${i>0?`<button class="btn-move" onclick="mover(dadosTeoria,${i},-1,renderTeoria)">↑</button>`:''}
+        ${i<dadosTeoria.length-1?`<button class="btn-move" onclick="mover(dadosTeoria,${i},1,renderTeoria)">↓</button>`:''}
+        <button class="btn-del" onclick="dadosTeoria.splice(${i},1);renderTeoria()">Remover</button>
       </div>
-    </div>
-  `).join('');
-}
-function addTeoria(){
-  teoria.push({titulo:'',conteudo:''});
-  renderTeoria();
-  document.getElementById('teoria-list').lastElementChild.scrollIntoView({behavior:'smooth'});
-}
-function removerTeoria(i){
-  if(!confirm('Remover este conceito?'))return;
-  teoria.splice(i,1);
-  renderTeoria();
-}
-function moverTeoria(i,dir){
-  const j=i+dir;
-  [teoria[i],teoria[j]]=[teoria[j],teoria[i]];
-  renderTeoria();
-}
-async function gerarTeoria(){
-  const btn = event.target;
-  btn.textContent = 'Salvando...';
-  btn.disabled = true;
-  try {
-    await sb.from('teoria').delete().neq('id', 0);
-    const rows = teoria.map((t,i)=>({titulo:t.titulo, conteudo:t.conteudo, ordem:i+1}));
-    const {error} = await sb.from('teoria').insert(rows);
-    if(error) throw error;
-    showToast('Teoria salva no Supabase!');
-  } catch(e){
-    showToast('Erro: '+e.message);
-  }
-  btn.textContent = 'Salvar teoria';
-  btn.disabled = false;
+    </div>`).join('');
 }
 
-// UTILS
-function escHtml(str){return str.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function copiar(id){
-  const text = document.getElementById(id).textContent;
-  navigator.clipboard.writeText(text);
-  showToast('Copiado para a área de transferência!');
+function addTeoria(){
+  dadosTeoria.push({titulo:'',conteudo:''});
+  renderTeoria();
+  document.getElementById('lista-teoria').lastElementChild.scrollIntoView({behavior:'smooth'});
 }
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2500);
+
+async function salvarTeoria(){
+  const btn = document.getElementById('btn-salvar-teoria');
+  btn.disabled=true; btn.textContent='Salvando...';
+  try{
+    await sb.from('teoria').delete().neq('id',0);
+    const rows = dadosTeoria.map((t,i)=>({titulo:t.titulo,conteudo:t.conteudo,ordem:i+1}));
+    const {error} = await sb.from('teoria').insert(rows);
+    if(error) throw error;
+    await carregarTudo();
+    showToast('Teoria salva!');
+  }catch(e){ showToast('Erro: '+e.message); }
+  btn.disabled=false; btn.textContent='Salvar teoria';
 }
+
+function mover(arr,i,dir,render){ const j=i+dir; [arr[i],arr[j]]=[arr[j],arr[i]]; render(); }
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
 </script>
 </body>
 </html>
