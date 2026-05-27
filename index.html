@@ -869,7 +869,21 @@ const SUPABASE_KEY = 'sb_publishable_DIXa0leuo9NzyGEMtYPGNg_e_o7BiJA';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // GATILHOS
-const GATILHOS = [
+let GATILHOS = [];
+let TEORIA_DATA = [];
+
+async function carregarDados(){
+  try {
+    const [gRes, tRes] = await Promise.all([
+      sb.from('gatilhos').select('*').order('ordem'),
+      sb.from('teoria').select('*').order('ordem')
+    ]);
+    if(gRes.data && gRes.data.length > 0) GATILHOS = gRes.data;
+    if(tRes.data && tRes.data.length > 0) TEORIA_DATA = tRes.data;
+  } catch(e){ console.error('Erro ao carregar dados:', e); }
+}
+
+const GATILHOS_FALLBACK = [
   {texto:"Escreva sobre uma cor que você nunca conseguiu descrever com palavras.",cat:"Sensorial"},
   {texto:"Seu personagem encontra uma carta que foi escrita para ele, mas nunca enviada.",cat:"Narrativa"},
   {texto:"Descreva um lugar onde o tempo parece não existir.",cat:"Espaço"},
@@ -932,7 +946,7 @@ const GATILHOS = [
   {texto:"Descreva o exato instante antes de algo inevitável.",cat:"Narrativa"},
 ];
 
-const TEORIA = [
+const TEORIA_FALLBACK = [
   {
     titulo:"A Teoria da Colcha de Retalhos",
     conteudo:`<p>Depois de muito tempo estudando o processo criativo, cheguei a uma conclusão que resume bem o que fazemos na prática: <strong>criar é como montar uma colcha de retalhos.</strong></p>
@@ -999,12 +1013,13 @@ function formatDate(d){
 
 // GATILHO DO DIA
 function getGatilhoDodia(){
+  const list = GATILHOS.length > 0 ? GATILHOS : GATILHOS_FALLBACK;
   const start = new Date('2025-01-01');
   const today = new Date();
   const diff = Math.floor((today - start) / (1000*60*60*24));
-  const idx = diff % GATILHOS.length;
-  const dayNum = (diff % GATILHOS.length) + 1;
-  return {gatilho: GATILHOS[idx], idx, dayNum};
+  const idx = diff % list.length;
+  const dayNum = (diff % list.length) + 1;
+  return {gatilho: list[idx], idx, dayNum};
 }
 
 function renderGatilho(){
@@ -1143,7 +1158,7 @@ async function salvarTexto(){
   try {
     const {error} = await sb.from('rascunhos').insert({
       user_id: state.user.id,
-      gatilho: gatilho.texto,
+      gatilho: gatilho.texto || gatilho.gatilho || '',
       texto,
       created_at: new Date().toISOString()
     });
@@ -1252,7 +1267,8 @@ function shareOn(platform){
 // TEORIA
 function renderTeoria(){
   const grid = document.getElementById('teoria-grid');
-  grid.innerHTML = TEORIA.map((t,i)=>`
+  const list = TEORIA_DATA.length > 0 ? TEORIA_DATA : TEORIA_FALLBACK;
+  grid.innerHTML = list.map((t,i)=>`
     <div class="teoria-card" onclick="toggleTeoria(${i})">
       <div class="teoria-header">
         <div>
@@ -1274,6 +1290,7 @@ function toggleTeoria(i){
 
 // INIT
 async function init(){
+  await carregarDados();
   const {data:{session}} = await sb.auth.getSession();
   if(session){
     state.user = session.user;

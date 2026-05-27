@@ -77,6 +77,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--black);min-heig
 .instrucoes{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.5rem;font-size:.82rem;color:var(--muted);line-height:1.6}
 .instrucoes strong{color:var(--black)}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -121,10 +122,9 @@ body{font-family:var(--sans);background:var(--cream);color:var(--black);min-heig
       <div id="gatilhos-list"></div>
       <div class="gerar-section">
         <h3>Gerar código</h3>
-        <p>Clique para gerar o trecho de código atualizado. Substitua o array <code>const GATILHOS = [...]</code> no seu <code>index.html</code>.</p>
-        <button class="btn-gerar" onclick="gerarGatilhos()">Gerar código dos gatilhos</button>
-        <div class="code-output" id="output-gatilhos"></div>
-        <button class="btn-copy" id="copy-gatilhos" onclick="copiar('output-gatilhos')">Copiar tudo</button>
+        <p>Clique para salvar os gatilhos direto no banco de dados. O site atualiza automaticamente!</p>
+        <button class="btn-gerar" onclick="gerarGatilhos()">Salvar gatilhos</button>
+
       </div>
     </div>
 
@@ -140,10 +140,9 @@ body{font-family:var(--sans);background:var(--cream);color:var(--black);min-heig
       <div id="teoria-list"></div>
       <div class="gerar-section">
         <h3>Gerar código</h3>
-        <p>Clique para gerar o trecho de código atualizado. Substitua o array <code>const TEORIA = [...]</code> no seu <code>index.html</code>.</p>
-        <button class="btn-gerar" onclick="gerarTeoria()">Gerar código da teoria</button>
-        <div class="code-output" id="output-teoria"></div>
-        <button class="btn-copy" id="copy-teoria" onclick="copiar('output-teoria')">Copiar tudo</button>
+        <p>Clique para salvar os conceitos direto no banco de dados. O site atualiza automaticamente!</p>
+        <button class="btn-gerar" onclick="gerarTeoria()">Salvar teoria</button>
+
       </div>
     </div>
   </div>
@@ -152,11 +151,31 @@ body{font-family:var(--sans);background:var(--cream);color:var(--black);min-heig
 <div class="toast" id="toast"></div>
 
 <script>
+// SUPABASE
+const SUPABASE_URL = 'https://zaqdfxgzwhmhuxqfasda.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_DIXa0leuo9NzyGEMtYPGNg_e_o7BiJA';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 // SENHA — mude para a senha que quiser
 const SENHA_ADMIN = 'escreve2025';
 
-// DADOS INICIAIS
-let gatilhos = [
+// DADOS
+let gatilhos = [];
+let teoria = [];
+
+async function carregarDados(){
+  const [gRes, tRes] = await Promise.all([
+    sb.from('gatilhos').select('*').order('ordem'),
+    sb.from('teoria').select('*').order('ordem')
+  ]);
+  if(gRes.data) gatilhos = gRes.data;
+  if(tRes.data) teoria = tRes.data;
+  renderGatilhos();
+  renderTeoria();
+}
+
+// DADOS INICIAIS FALLBACK
+let gatilhosFallback = [
   {texto:"Escreva sobre uma cor que você nunca conseguiu descrever com palavras.",cat:"Sensorial"},
   {texto:"Seu personagem encontra uma carta que foi escrita para ele, mas nunca enviada.",cat:"Narrativa"},
   {texto:"Descreva um lugar onde o tempo parece não existir.",cat:"Espaço"},
@@ -234,8 +253,7 @@ function login(){
   if(s === SENHA_ADMIN){
     document.getElementById('login-screen').style.display='none';
     document.getElementById('admin-screen').style.display='block';
-    renderGatilhos();
-    renderTeoria();
+    carregarDados();
   } else {
     document.getElementById('login-error').textContent='Senha incorreta.';
   }
@@ -290,13 +308,21 @@ function moverGatilho(i,dir){
   [gatilhos[i],gatilhos[j]]=[gatilhos[j],gatilhos[i]];
   renderGatilhos();
 }
-function gerarGatilhos(){
-  const code = `const GATILHOS = [\n${gatilhos.map(g=>`  {texto:${JSON.stringify(g.texto)},cat:${JSON.stringify(g.cat)}}`).join(',\n')},\n];`;
-  const el = document.getElementById('output-gatilhos');
-  el.textContent = code;
-  el.style.display='block';
-  document.getElementById('copy-gatilhos').style.display='inline-block';
-  showToast('Código gerado!');
+async function gerarGatilhos(){
+  const btn = event.target;
+  btn.textContent = 'Salvando...';
+  btn.disabled = true;
+  try {
+    await sb.from('gatilhos').delete().neq('id', 0);
+    const rows = gatilhos.map((g,i)=>({texto:g.texto, cat:g.cat, ordem:i+1}));
+    const {error} = await sb.from('gatilhos').insert(rows);
+    if(error) throw error;
+    showToast('Gatilhos salvos no Supabase!');
+  } catch(e){
+    showToast('Erro: '+e.message);
+  }
+  btn.textContent = 'Salvar gatilhos';
+  btn.disabled = false;
 }
 
 // TEORIA
@@ -334,13 +360,21 @@ function moverTeoria(i,dir){
   [teoria[i],teoria[j]]=[teoria[j],teoria[i]];
   renderTeoria();
 }
-function gerarTeoria(){
-  const code = `const TEORIA = [\n${teoria.map(t=>`  {\n    titulo:${JSON.stringify(t.titulo)},\n    conteudo:\`${t.conteudo}\`\n  }`).join(',\n')},\n];`;
-  const el = document.getElementById('output-teoria');
-  el.textContent = code;
-  el.style.display='block';
-  document.getElementById('copy-teoria').style.display='inline-block';
-  showToast('Código gerado!');
+async function gerarTeoria(){
+  const btn = event.target;
+  btn.textContent = 'Salvando...';
+  btn.disabled = true;
+  try {
+    await sb.from('teoria').delete().neq('id', 0);
+    const rows = teoria.map((t,i)=>({titulo:t.titulo, conteudo:t.conteudo, ordem:i+1}));
+    const {error} = await sb.from('teoria').insert(rows);
+    if(error) throw error;
+    showToast('Teoria salva no Supabase!');
+  } catch(e){
+    showToast('Erro: '+e.message);
+  }
+  btn.textContent = 'Salvar teoria';
+  btn.disabled = false;
 }
 
 // UTILS
