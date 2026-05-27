@@ -88,6 +88,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--black);min-heig
     <div class="tabs">
       <button class="tab active" onclick="trocarAba('gatilhos')">Gatilhos</button>
       <button class="tab" onclick="trocarAba('teoria')">Teoria Criativa</button>
+      <button class="tab" onclick="trocarAba('textos')">Textos do Site</button>
     </div>
 
     <div class="tab-content active" id="tab-gatilhos">
@@ -113,6 +114,32 @@ body{font-family:var(--sans);background:var(--cream);color:var(--black);min-heig
         <h3>Salvar alterações</h3>
         <p>Clique para salvar os conceitos no banco de dados. O site atualiza automaticamente.</p>
         <button class="btn-save" id="btn-salvar-teoria" onclick="salvarTeoria()">Salvar teoria</button>
+      </div>
+    </div>
+    <div class="tab-content" id="tab-textos">
+      <div class="section-header">
+        <h2>Textos da Tela Inicial</h2>
+      </div>
+      <div class="item-card">
+        <div class="item-fields">
+          <div class="form-group">
+            <label>Tagline (abaixo do logo)</label>
+            <input class="item-input" id="cfg-tagline" placeholder="Ex: Metodologia Criativa"/>
+          </div>
+          <div class="form-group" style="margin-top:.75rem">
+            <label>Título de boas-vindas</label>
+            <input class="item-input" id="cfg-titulo" placeholder="Ex: Bem-vinde!"/>
+          </div>
+          <div class="form-group" style="margin-top:.75rem">
+            <label>Descrição</label>
+            <textarea class="item-textarea" id="cfg-desc" placeholder="Texto de descrição abaixo do título"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="save-section">
+        <h3>Salvar alterações</h3>
+        <p>Clique para salvar os textos da tela inicial. O site atualiza automaticamente.</p>
+        <button class="btn-save" id="btn-salvar-textos" onclick="salvarTextosSite()">Salvar textos</button>
       </div>
     </div>
   </div>
@@ -147,22 +174,29 @@ function fazerLogout(){
 }
 
 async function carregarTudo(){
-  const [gRes, tRes] = await Promise.all([
+  const [gRes, tRes, cRes] = await Promise.all([
     sb.from('gatilhos').select('*').order('ordem'),
-    sb.from('teoria').select('*').order('ordem')
+    sb.from('teoria').select('*').order('ordem'),
+    sb.from('configuracoes').select('*').limit(1).maybeSingle()
   ]);
   dadosGatilhos = gRes.data || [];
   dadosTeoria = tRes.data || [];
   renderGatilhos();
   renderTeoria();
+  if(cRes.data){
+    document.getElementById('cfg-tagline').value = cRes.data.login_tagline || '';
+    document.getElementById('cfg-titulo').value = cRes.data.login_titulo || '';
+    document.getElementById('cfg-desc').value = cRes.data.login_desc || '';
+  }
 }
 
 function trocarAba(aba){
   document.querySelectorAll('.tab').forEach((t,i)=>{
-    t.classList.toggle('active',(i===0&&aba==='gatilhos')||(i===1&&aba==='teoria'));
+    t.classList.toggle('active',(i===0&&aba==='gatilhos')||(i===1&&aba==='teoria')||(i===2&&aba==='textos'));
   });
   document.getElementById('tab-gatilhos').classList.toggle('active',aba==='gatilhos');
   document.getElementById('tab-teoria').classList.toggle('active',aba==='teoria');
+  document.getElementById('tab-textos').classList.toggle('active',aba==='textos');
 }
 
 function renderGatilhos(){
@@ -239,6 +273,21 @@ async function salvarTeoria(){
     showToast('Teoria salva!');
   }catch(e){ showToast('Erro: '+e.message); }
   btn.disabled=false; btn.textContent='Salvar teoria';
+}
+
+async function salvarTextosSite(){
+  const btn = document.getElementById('btn-salvar-textos');
+  btn.disabled=true; btn.textContent='Salvando...';
+  try{
+    const {error} = await sb.from('configuracoes').update({
+      login_tagline: document.getElementById('cfg-tagline').value,
+      login_titulo: document.getElementById('cfg-titulo').value,
+      login_desc: document.getElementById('cfg-desc').value
+    }).eq('id', 1);
+    if(error) throw error;
+    showToast('Textos salvos!');
+  }catch(e){ showToast('Erro: '+e.message); }
+  btn.disabled=false; btn.textContent='Salvar textos';
 }
 
 function mover(arr,i,dir,render){ const j=i+dir; [arr[i],arr[j]]=[arr[j],arr[i]]; render(); }

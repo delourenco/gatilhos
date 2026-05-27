@@ -711,7 +711,7 @@ textarea::placeholder{color:var(--border);font-style:italic}
   <div class="auth-wrap">
     <div class="auth-box">
       <div class="auth-logo">escreve desirée</div>
-      <div class="auth-tagline">Metodologia Criativa</div>
+      <div class="auth-tagline" id="auth-tagline">Metodologia Criativa</div>
       <h2 id="auth-title">Bem-vinde!</h2>
       <p id="auth-desc">Entre para salvar seus textos e acompanhar sua jornada criativa.</p>
       <div class="auth-error" id="auth-error"></div>
@@ -749,6 +749,9 @@ textarea::placeholder{color:var(--border);font-style:italic}
         </button>
         <button class="nav-item" data-page="rascunhos" onclick="navigate('rascunhos')">
           <span class="nav-icon">[o]</span> Meus Textos
+        </button>
+        <button class="nav-item" data-page="comofunciona" onclick="navigate('comofunciona')">
+          <span class="nav-icon">?</span> Como funciona?
         </button>
         <button class="nav-item" data-page="teoria" onclick="navigate('teoria')">
           <span class="nav-icon">[#]</span> Teoria Criativa
@@ -842,6 +845,38 @@ textarea::placeholder{color:var(--border);font-style:italic}
           <div class="teoria-grid" id="teoria-grid"></div>
         </div>
       </div>
+      <div data-page="comofunciona">
+        <div class="page-header">
+          <div>
+            <h1 id="cf-titulo">Como funciona?</h1>
+            <div class="subtitle">Tudo que você precisa saber para começar</div>
+          </div>
+        </div>
+        <div class="gatilho-wrap">
+          <div id="cf-conteudo">
+            <div class="gatilho-card" style="margin-bottom:1.5rem">
+              <div class="gatilho-number">O Gatilho Diário</div>
+              <div class="gatilho-text" style="font-size:1.1rem">Todos os dias um novo gatilho de escrita aparece aqui para você.</div>
+              <p style="font-size:.85rem;color:#5a4a3a;margin-top:.75rem;line-height:1.6">Os gatilhos mudam automaticamente com base na data — você não precisa fazer nada. Basta abrir o site e escrever!</p>
+            </div>
+            <div class="gatilho-card" style="margin-bottom:1.5rem">
+              <div class="gatilho-number">O Espaço de Escrita</div>
+              <div class="gatilho-text" style="font-size:1.1rem">Escreva livremente no campo abaixo do gatilho.</div>
+              <p style="font-size:.85rem;color:#5a4a3a;margin-top:.75rem;line-height:1.6">Crie uma conta gratuita para salvar seus textos e acessá-los de qualquer lugar. Sem conta, você pode escrever mas não salvar.</p>
+            </div>
+            <div class="gatilho-card" style="margin-bottom:1.5rem">
+              <div class="gatilho-number">Meus Textos</div>
+              <div class="gatilho-text" style="font-size:1.1rem">Todos os seus textos salvos ficam organizados aqui.</div>
+              <p style="font-size:.85rem;color:#5a4a3a;margin-top:.75rem;line-height:1.6">Você pode reler, editar ou excluir qualquer texto. Cada um fica guardado com o gatilho original que o inspirou.</p>
+            </div>
+            <div class="gatilho-card">
+              <div class="gatilho-number">Compartilhar</div>
+              <div class="gatilho-text" style="font-size:1.1rem">Escreva e compartilhe nas redes sociais.</div>
+              <p style="font-size:.85rem;color:#5a4a3a;margin-top:.75rem;line-height:1.6">Depois de escrever, clique em "Compartilhar" para postar no Twitter/X, WhatsApp ou copiar para o Instagram — o texto vai acompanhado do gatilho que o inspirou.</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 </div>
@@ -874,12 +909,19 @@ let TEORIA_DATA = [];
 
 async function carregarDados(){
   try {
-    const [gRes, tRes] = await Promise.all([
+    const [gRes, tRes, cRes] = await Promise.all([
       sb.from('gatilhos').select('*').order('ordem'),
-      sb.from('teoria').select('*').order('ordem')
+      sb.from('teoria').select('*').order('ordem'),
+      sb.from('configuracoes').select('*').limit(1).maybeSingle()
     ]);
     if(gRes.data && gRes.data.length > 0) GATILHOS = gRes.data;
     if(tRes.data && tRes.data.length > 0) TEORIA_DATA = tRes.data;
+    if(cRes.data){
+      const c = cRes.data;
+      if(c.login_tagline) document.getElementById('auth-tagline').textContent = c.login_tagline;
+      if(c.login_titulo) document.getElementById('auth-title').textContent = c.login_titulo;
+      if(c.login_desc) document.getElementById('auth-desc').textContent = c.login_desc;
+    }
   } catch(e){ console.error('Erro ao carregar dados:', e); }
 }
 
