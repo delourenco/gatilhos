@@ -779,7 +779,6 @@ textarea::placeholder{color:var(--border);font-style:italic}
           </div>
         </div>
         <div class="gatilho-wrap">
-          <div class="day-badge">✦ <span id="day-count">Dia 1</span></div>
           <div class="gatilho-card">
             <div class="gatilho-number" id="gatilho-number">Gatilho #01</div>
             <div class="gatilho-text" id="gatilho-text">Carregando...</div>
@@ -1074,7 +1073,7 @@ function getGatilhoDodia(){
 function renderGatilho(){
   const {gatilho, idx, dayNum} = getGatilhoDodia();
   document.getElementById('gatilho-text').textContent = gatilho.texto;
-  document.getElementById('gatilho-number').textContent = `Gatilho #${String(idx+1).padStart(2,'0')}`;
+  document.getElementById('gatilho-number').textContent = 'Escreva sobre...';
   document.getElementById('gatilho-cat').textContent = gatilho.cat;
   document.getElementById('day-count').textContent = `Dia ${dayNum}`;
   const today = new Date();
