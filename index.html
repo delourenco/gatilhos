@@ -1062,12 +1062,11 @@ function formatDate(d){
 // GATILHO DO DIA
 function getGatilhoDodia(){
   const list = GATILHOS.length > 0 ? GATILHOS : GATILHOS_FALLBACK;
-  const start = new Date('2025-01-01');
   const today = new Date();
+  const start = new Date(today.getFullYear(), 0, 1);
   const diff = Math.floor((today - start) / (1000*60*60*24));
   const idx = diff % list.length;
-  const dayNum = (diff % list.length) + 1;
-  return {gatilho: list[idx], idx, dayNum};
+  return {gatilho: list[idx], idx};
 }
 
 function renderGatilho(){
